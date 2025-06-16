@@ -1,0 +1,283 @@
+package controllers;
+
+import DataBase.BillsDataBase;
+import DataBase.OutletsDataBase;
+import DataBase.ProductsDataBase;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import javafx.util.StringConverter;
+import models.BillItem;
+import models.Outlet;
+import models.Product;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ResourceBundle;
+
+public class BillingController implements Initializable {
+    @FXML private ComboBox<Outlet> outletComboBox;
+    @FXML private ComboBox<Product> productComboBox;
+    @FXML private TextField quantityField;
+    @FXML private TableView<BillItem> itemsTableView;
+    @FXML private TableColumn<BillItem, String> productNameColumn;
+    @FXML private TableColumn<BillItem, Integer> quantityColumn;
+    @FXML private TableColumn<BillItem, Double> priceColumn;
+    @FXML private TableColumn<BillItem, Double> totalColumn;
+    @FXML private TableColumn<BillItem, Void> actionColumn;
+    @FXML private Label totalAmountLabel;
+    @FXML private ComboBox<String> paymentTypeComboBox;
+    @FXML private ComboBox<Integer> creditMonthsComboBox;
+    @FXML private Label creditMonthsLabel;
+    @FXML private TextField remarksField;
+
+    private final ObservableList<BillItem> billItems = FXCollections.observableArrayList();
+    private final BillsDataBase billsDataBase = new BillsDataBase();
+    private final OutletsDataBase outletsDataBase = new OutletsDataBase();
+    private final ProductsDataBase productsDataBase = new ProductsDataBase();
+    private boolean outletSelected = false;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        setupComboBoxes();
+        setupTable();
+        setupListeners();
+    }
+
+    private void setupComboBoxes() {
+        // Setup outlet combo box
+        outletComboBox.setItems(FXCollections.observableArrayList(outletsDataBase.getAllOutlets()));
+        outletComboBox.setConverter(new StringConverter<Outlet>() {
+            @Override
+            public String toString(Outlet outlet) {
+                return outlet != null ? outlet.getName() : "";
+            }
+
+            @Override
+            public Outlet fromString(String string) {
+                return null;
+            }
+        });
+
+        // Setup payment type combo box
+        paymentTypeComboBox.setItems(FXCollections.observableArrayList(
+            "Cash", "UPI", "Credit"
+        ));
+
+        // Setup credit months combo box
+        creditMonthsComboBox.setItems(FXCollections.observableArrayList(
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+        ));
+    }
+
+    private void setupTable() {
+        productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
+        
+        actionColumn.setCellFactory(col -> new TableCell<BillItem, Void>() {
+            private final Button removeButton = new Button("Remove");
+            {
+                removeButton.setOnAction(event -> {
+                    BillItem item = getTableView().getItems().get(getIndex());
+                    billItems.remove(item);
+                    updateTotalAmount();
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : removeButton);
+            }
+        });
+
+        itemsTableView.setItems(billItems);
+    }
+
+    private void setupListeners() {
+        // Disable outlet selection after first item is added
+        outletComboBox.setOnAction(event -> {
+            if (!outletSelected && outletComboBox.getValue() != null) {
+                outletSelected = true;
+                loadProductsForOutlet(outletComboBox.getValue().getId());
+            }
+        });
+
+        // Show/hide credit months based on payment type
+        paymentTypeComboBox.setOnAction(event -> {
+            boolean isCredit = "Credit".equals(paymentTypeComboBox.getValue());
+            creditMonthsLabel.setVisible(isCredit);
+            creditMonthsLabel.setManaged(isCredit);
+            creditMonthsComboBox.setVisible(isCredit);
+            creditMonthsComboBox.setManaged(isCredit);
+        });
+    }
+
+    private void loadProductsForOutlet(int outletId) {
+        productComboBox.setItems(FXCollections.observableArrayList(
+            productsDataBase.getAllProductsWithAvailableQuantity()
+        ));
+        productComboBox.setConverter(new StringConverter<Product>() {
+            @Override
+            public String toString(Product product) {
+                return product != null ? product.getName() : "";
+            }
+
+            @Override
+            public Product fromString(String string) {
+                return null;
+            }
+        });
+    }
+
+    @FXML
+    private void onAddItemClicked() {
+        if (!validateInputs()) return;
+
+        Product selectedProduct = productComboBox.getValue();
+        int quantity = Integer.parseInt(quantityField.getText());
+
+        BillItem item = new BillItem(
+            0, // billItemId will be set by database
+            0, // billId will be set by database
+            selectedProduct.getId(),
+            selectedProduct.getName(),
+            quantity,
+            selectedProduct.getUnitPrice()
+        );
+
+        billItems.add(item);
+        updateTotalAmount();
+        clearInputFields();
+    }
+
+    private boolean validateInputs() {
+        if (outletComboBox.getValue() == null) {
+            showError("Error", "Please select an outlet");
+            return false;
+        }
+        if (productComboBox.getValue() == null) {
+            showError("Error", "Please select a product");
+            return false;
+        }
+        if (quantityField.getText().isEmpty()) {
+            showError("Error", "Please enter quantity");
+            return false;
+        }
+        try {
+            int quantity = Integer.parseInt(quantityField.getText());
+            if (quantity <= 0) {
+                showError("Error", "Quantity must be greater than 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showError("Error", "Invalid quantity");
+            return false;
+        }
+        return true;
+    }
+
+    private void clearInputFields() {
+        productComboBox.setValue(null);
+        quantityField.clear();
+    }
+
+    private void updateTotalAmount() {
+        double total = billItems.stream()
+            .mapToDouble(BillItem::getTotal)
+            .sum();
+        totalAmountLabel.setText(String.format("%.2f", total));
+    }
+
+    @FXML
+    private void onGenerateBillClicked() {
+        if (billItems.isEmpty()) {
+            showError("Error", "Please add items to the bill");
+            return;
+        }
+
+        if (paymentTypeComboBox.getValue() == null) {
+            showError("Error", "Please select payment type");
+            return;
+        }
+
+        if ("Credit".equals(paymentTypeComboBox.getValue()) && creditMonthsComboBox.getValue() == null) {
+            showError("Error", "Please select credit months");
+            return;
+        }
+
+        try {
+            double totalAmount = billItems.stream()
+                .mapToDouble(BillItem::getTotal)
+                .sum();
+
+            // Create bill
+            int billId = billsDataBase.createBill(
+                outletComboBox.getValue().getId(),
+                totalAmount,
+                paymentTypeComboBox.getValue(),
+                remarksField.getText()
+            );
+
+            // Add bill items
+            for (BillItem item : billItems) {
+                billsDataBase.addBillItem(
+                    billId,
+                    item.getProductId(),
+                    item.getQuantity(),
+                    item.getPrice()
+                );
+            }
+
+            // If credit payment, create outlet credit
+            if ("Credit".equals(paymentTypeComboBox.getValue())) {
+                LocalDate dueDate = LocalDate.now().plusMonths(creditMonthsComboBox.getValue());
+                billsDataBase.createOutletCredit(
+                    outletComboBox.getValue().getId(),
+                    billId,
+                    totalAmount,
+                    java.sql.Date.valueOf(dueDate)
+                );
+            }
+
+            showSuccess("Success", "Bill generated successfully");
+            clearBill();
+        } catch (SQLException e) {
+            showError("Error", "Failed to generate bill: " + e.getMessage());
+        }
+    }
+
+    private void clearBill() {
+        billItems.clear();
+        updateTotalAmount();
+        outletComboBox.setValue(null);
+        outletSelected = false;
+        paymentTypeComboBox.setValue(null);
+        remarksField.clear();
+        creditMonthsComboBox.setValue(null);
+    }
+
+    private void showError(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void showSuccess(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+} 

@@ -24,8 +24,14 @@ public class HomeController {
 
     @FXML
     private void onBillingClicked() {
-        // TODO: Implement billing view
-        showAlert("Billing", "Billing view will be implemented soon!");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/billing.fxml"));
+            Parent billingView = loader.load();
+            mainBorderPane.setCenter(billingView);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load billing page!", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
