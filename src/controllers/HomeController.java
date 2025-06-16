@@ -35,6 +35,18 @@ public class HomeController {
     }
 
     @FXML
+    private void onCreditManagementClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/credit_management.fxml"));
+            Parent creditManagementView = loader.load();
+            mainBorderPane.setCenter(creditManagementView);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load credit management page!", Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
     private void onInletsClicked() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/inlets.fxml"));

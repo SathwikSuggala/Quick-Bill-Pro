@@ -2,6 +2,7 @@ package DataBase;
 
 import models.Bill;
 import models.BillItem;
+import models.OutletCredit;
 import models.Product;
 
 import java.sql.*;
@@ -152,9 +153,176 @@ public class BillsDataBase {
             stmt.setInt(1, outletId);
             stmt.setInt(2, billId);
             stmt.setDouble(3, creditAmount);
-            stmt.setDate(4, dueDate);
+            stmt.setDate(4, new java.sql.Date(dueDate.getTime()));
             
             stmt.executeUpdate();
+        }
+    }
+    
+    public static List<OutletCredit> getAllCredits() throws SQLException {
+        System.out.println("Executing getAllCredits query...");
+        String query = "SELECT oc.*, o.name as outlet_name, " +
+                      "COALESCE(SUM(cp.payment_amount), 0) as paid_amount, " +
+                      "strftime('%Y-%m-%d', oc.credit_date) as formatted_credit_date, " +
+                      "strftime('%Y-%m-%d', oc.due_date) as formatted_due_date " +
+                      "FROM outlet_credits oc " +
+                      "JOIN outlets o ON oc.outlet_id = o.outlet_id " +
+                      "LEFT JOIN credit_payments cp ON oc.credit_id = cp.credit_id " +
+                      "GROUP BY oc.credit_id " +
+                      "ORDER BY oc.credit_date DESC";
+        
+        List<OutletCredit> credits = new ArrayList<>();
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            System.out.println("Query executed successfully, processing results...");
+            while (rs.next()) {
+                try {
+                    double paidAmount = rs.getDouble("paid_amount");
+                    double creditAmount = rs.getDouble("credit_amount");
+                    String dueDateStr = rs.getString("formatted_due_date");
+                    String creditDateStr = rs.getString("formatted_credit_date");
+                    
+                    System.out.println("Processing credit - ID: " + rs.getInt("credit_id") + 
+                                     ", Due Date: " + dueDateStr);
+                    
+                    java.sql.Date dueDate = dueDateStr != null ? java.sql.Date.valueOf(dueDateStr) : null;
+                    java.sql.Date creditDate = creditDateStr != null ? java.sql.Date.valueOf(creditDateStr) : null;
+                    
+                    String status = determineCreditStatus(paidAmount, creditAmount, dueDate);
+                    
+                    OutletCredit credit = new OutletCredit(
+                        rs.getInt("credit_id"),
+                        rs.getInt("outlet_id"),
+                        rs.getString("outlet_name"),
+                        rs.getInt("bill_id"),
+                        creditAmount,
+                        creditDate,
+                        dueDate,
+                        status,
+                        paidAmount
+                    );
+                    credits.add(credit);
+                } catch (Exception e) {
+                    System.err.println("Error processing credit row: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Total credits processed: " + credits.size());
+        }
+        return credits;
+    }
+    
+    public static List<OutletCredit> getCreditsByOutlet(int outletId) throws SQLException {
+        System.out.println("Executing getCreditsByOutlet query for outlet ID: " + outletId);
+        String query = "SELECT oc.*, o.name as outlet_name, " +
+                      "COALESCE(SUM(cp.payment_amount), 0) as paid_amount, " +
+                      "strftime('%Y-%m-%d', oc.credit_date) as formatted_credit_date, " +
+                      "strftime('%Y-%m-%d', oc.due_date) as formatted_due_date " +
+                      "FROM outlet_credits oc " +
+                      "JOIN outlets o ON oc.outlet_id = o.outlet_id " +
+                      "LEFT JOIN credit_payments cp ON oc.credit_id = cp.credit_id " +
+                      "WHERE oc.outlet_id = ? " +
+                      "GROUP BY oc.credit_id " +
+                      "ORDER BY oc.credit_date DESC";
+        
+        List<OutletCredit> credits = new ArrayList<>();
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, outletId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                System.out.println("Query executed successfully, processing results...");
+                while (rs.next()) {
+                    try {
+                        double paidAmount = rs.getDouble("paid_amount");
+                        double creditAmount = rs.getDouble("credit_amount");
+                        String dueDateStr = rs.getString("formatted_due_date");
+                        String creditDateStr = rs.getString("formatted_credit_date");
+                        
+                        System.out.println("Processing credit - ID: " + rs.getInt("credit_id") + 
+                                         ", Due Date: " + dueDateStr);
+                        
+                        java.sql.Date dueDate = dueDateStr != null ? java.sql.Date.valueOf(dueDateStr) : null;
+                        java.sql.Date creditDate = creditDateStr != null ? java.sql.Date.valueOf(creditDateStr) : null;
+                        
+                        String status = determineCreditStatus(paidAmount, creditAmount, dueDate);
+                        
+                        OutletCredit credit = new OutletCredit(
+                            rs.getInt("credit_id"),
+                            rs.getInt("outlet_id"),
+                            rs.getString("outlet_name"),
+                            rs.getInt("bill_id"),
+                            creditAmount,
+                            creditDate,
+                            dueDate,
+                            status,
+                            paidAmount
+                        );
+                        credits.add(credit);
+                    } catch (Exception e) {
+                        System.err.println("Error processing credit row: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("Total credits processed: " + credits.size());
+            }
+        }
+        return credits;
+    }
+    
+    public static void addCreditPayment(int creditId, double amount, String paymentMode, String remarks) throws SQLException {
+        String query = "INSERT INTO credit_payments (credit_id, payment_amount, payment_mode) VALUES (?, ?, ?)";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, creditId);
+            stmt.setDouble(2, amount);
+            stmt.setString(3, paymentMode);
+            
+            stmt.executeUpdate();
+            
+            // Update credit status
+            updateCreditStatus(creditId);
+        }
+    }
+    
+    private static void updateCreditStatus(int creditId) throws SQLException {
+        String query = "UPDATE outlet_credits " +
+                      "SET status = ( " +
+                      "    SELECT CASE " +
+                      "        WHEN COALESCE(SUM(cp.payment_amount), 0) >= credit_amount THEN 'PAID' " +
+                      "        WHEN COALESCE(SUM(cp.payment_amount), 0) > 0 THEN 'PARTIALLY_PAID' " +
+                      "        WHEN due_date < DATE('now') THEN 'OVERDUE' " +
+                      "        ELSE 'PENDING' " +
+                      "    END " +
+                      "    FROM credit_payments cp " +
+                      "    WHERE cp.credit_id = outlet_credits.credit_id " +
+                      ") " +
+                      "WHERE credit_id = ?";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, creditId);
+            stmt.executeUpdate();
+        }
+    }
+    
+    private static String determineCreditStatus(double paidAmount, double creditAmount, java.sql.Date dueDate) {
+        if (paidAmount >= creditAmount) {
+            return "PAID";
+        } else if (paidAmount > 0) {
+            return "PARTIALLY_PAID";
+        } else if (dueDate != null && dueDate.before(new java.sql.Date(System.currentTimeMillis()))) {
+            return "OVERDUE";
+        } else {
+            return "PENDING";
         }
     }
 } 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.CreditManagementController" stylesheets="@../styles/styles.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Text styleClass="header-text" text="Credit Management"/>
+    
+    <!-- Search and Filter Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <ComboBox fx:id="outletComboBox" promptText="Select Outlet" prefWidth="200"/>
+        <ComboBox fx:id="statusComboBox" promptText="Select Status" prefWidth="150"/>
+        <TextField fx:id="searchField" promptText="Search..." prefWidth="200"/>
+        <Button text="Refresh" onAction="#onRefreshClicked" styleClass="primary-button"/>
+    </HBox>
+    
+    <!-- Credits Table -->
+    <TableView fx:id="creditsTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="creditIdColumn" text="Credit ID" prefWidth="80"/>
+            <TableColumn fx:id="outletColumn" text="Outlet" prefWidth="150"/>
+            <TableColumn fx:id="amountColumn" text="Amount" prefWidth="100"/>
+            <TableColumn fx:id="paidColumn" text="Paid" prefWidth="100"/>
+            <TableColumn fx:id="remainingColumn" text="Remaining" prefWidth="100"/>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
+            <TableColumn fx:id="creditDateColumn" text="Credit Date" prefWidth="100"/>
+            <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="100"/>
+            <TableColumn fx:id="actionColumn" text="Action" prefWidth="100"/>
+        </columns>
+    </TableView>
+</VBox> 

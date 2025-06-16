@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<VBox spacing="15" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.PaymentDialogController" stylesheets="@../styles/styles.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Text styleClass="header-text" text="Add Payment"/>
+    
+    <GridPane vgap="10" hgap="10">
+        <Label text="Credit ID:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="creditIdLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        
+        <Label text="Outlet:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="outletLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        
+        <Label text="Remaining Amount:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <Label fx:id="remainingAmountLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        
+        <Label text="Payment Amount:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="paymentAmountField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        
+        <Label text="Payment Mode:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <ComboBox fx:id="paymentModeComboBox" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        
+        <Label text="Remarks:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <TextArea fx:id="remarksArea" prefRowCount="3" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    </GridPane>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#onCancel"/>
+        <Button text="Add Payment" onAction="#onAddPayment" styleClass="primary-button"/>
+    </HBox>
+</VBox> 
