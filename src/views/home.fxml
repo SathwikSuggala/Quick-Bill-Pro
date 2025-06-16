@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import java.net.URL?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.HomeController"
+            fx:id="mainBorderPane"
+            style="-fx-background-color: #f4f4f4;">
+    
+    <!-- Header -->
+    <top>
+        <VBox style="-fx-background-color: linear-gradient(to right, #2C5364, #203A43, #0F2027);">
+            <padding>
+                <Insets top="15" bottom="15" left="25" right="25"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <ImageView fitWidth="50" fitHeight="50" preserveRatio="true" smooth="true">
+                    <image>
+                        <Image url="@../assets/logo.png"/>
+                    </image>
+                </ImageView>
+                <Text text="QuickBillPro" fill="WHITE" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- Navigation Bar -->
+    <left>
+        <VBox style="-fx-background-color: #203A43;" minWidth="220">
+            <padding>
+                <Insets top="20" bottom="20" left="15" right="15"/>
+            </padding>
+            <spacing>10</spacing>
+            
+            <!-- Dashboard Button -->
+            <Button onAction="#onDashboardClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/dashboard.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Dashboard" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
+            <!-- Billing Button -->
+            <Button onAction="#onBillingClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/billing.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Billing" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
+            <!-- Inlets Button -->
+            <Button onAction="#onInletsClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/inlets.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Inlets" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
+            <!-- Outlets Button -->
+            <Button onAction="#onOutletsClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/outlets.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Outlets" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
+            <!-- Products Button -->
+            <Button onAction="#onProductsClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/products.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Products" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
+            <!-- Reports Button -->
+            <Button onAction="#onReportsClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/reports.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Reports" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
+            <!-- Settings Button -->
+            <Button onAction="#onSettingsClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/settings.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Settings" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
+            <Region VBox.vgrow="ALWAYS"/>
+            
+            <!-- User Profile Section -->
+            <VBox style="-fx-background-color: #2C5364; -fx-background-radius: 10;" spacing="10">
+                <padding>
+                    <Insets top="15" bottom="15" left="15" right="15"/>
+                </padding>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <ImageView fitWidth="40" fitHeight="40" preserveRatio="true">
+                        <image>
+                            <Image url="@../assets/icons/user.png"/>
+                        </image>
+                    </ImageView>
+                    <VBox>
+                        <Text text="Admin User" fill="WHITE" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                        <Text text="Administrator" fill="#B3E5FC" style="-fx-font-size: 12px;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- Main Content Area -->
+    <center>
+        <StackPane>
+            <Label text="Welcome to QuickBillPro" style="-fx-font-size: 24px;"/>
+        </StackPane>
+    </center>
+
+    <!-- Footer -->
+    <bottom>
+        <HBox style="-fx-background-color: #0F2027;" alignment="CENTER">
+            <padding>
+                <Insets top="10" bottom="10"/>
+            </padding>
+            <Label text="© 2024 QuickBillPro. All rights reserved." 
+                   style="-fx-text-fill: white;"/>
+        </HBox>
+    </bottom>
+
+    <stylesheets>
+        <URL value="@../styles/navigation.css"/>
+    </stylesheets>
+</BorderPane> 

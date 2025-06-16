@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToWidth="true" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.ProductsController">
+    <VBox spacing="20">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <Label text="Products Management" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+        <!-- Top Buttons -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Button text="Add New Product" onAction="#onAddProductClicked" 
+                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15;"/>
+            <Button text="Refresh" onAction="#onRefreshClicked" 
+                    style="-fx-font-size: 14px; -fx-padding: 8 15;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Purchase History" onAction="#onHistoryClicked"
+                    style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 8 15;"/>
+        </HBox>
+
+        <!-- Search Section -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <TextField fx:id="searchField" promptText="Search products..." prefWidth="300" 
+                      style="-fx-font-size: 14px; -fx-padding: 8;"/>
+            <Button text="Search" onAction="#onSearchClicked" 
+                    style="-fx-font-size: 14px; -fx-padding: 8 15;"/>
+            <Button text="Show All" onAction="#onShowAllClicked" 
+                    style="-fx-font-size: 14px; -fx-padding: 8 15;"/>
+        </HBox>
+
+        <!-- Products Table -->
+        <TableView fx:id="productsTable" VBox.vgrow="ALWAYS" 
+                  style="-fx-font-size: 14px; -fx-background-color: white; -fx-table-cell-border-color: transparent;">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="50" 
+                            style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="nameColumn" text="Name" prefWidth="150" 
+                            style="-fx-alignment: CENTER-LEFT;"/>
+                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="200" 
+                            style="-fx-alignment: CENTER-LEFT;"/>
+                <TableColumn fx:id="priceColumn" text="Unit Price" prefWidth="100" 
+                            style="-fx-alignment: CENTER-RIGHT;"/>
+                <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100" 
+                            style="-fx-alignment: CENTER;"/>
+                <TableColumn fx:id="inletColumn" text="Inlet" prefWidth="100" 
+                            style="-fx-alignment: CENTER-LEFT;"/>
+                <TableColumn fx:id="actionColumn" text="Actions" prefWidth="200" 
+                            style="-fx-alignment: CENTER;"/>
+            </columns>
+        </TableView>
+    </VBox>
+</ScrollPane> 

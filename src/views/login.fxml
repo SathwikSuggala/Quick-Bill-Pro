@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="controllers.LoginController"
+           style="-fx-background-color: linear-gradient(to bottom right, #2C5364, #203A43, #0F2027);">
+    <center>
+        <VBox alignment="CENTER" spacing="20"
+              maxWidth="350"
+              style="-fx-background-color: #ffffff; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0.0, 0.0);">
+            <padding>
+                <Insets top="40" bottom="40" left="30" right="30"/>
+            </padding>
+
+            <!-- Logo -->
+            <ImageView fitWidth="100" fitHeight="100" preserveRatio="true" smooth="true">
+                <image>
+                    <Image url="@../assets/logo.png"/>
+                </image>
+            </ImageView>
+
+            <!-- Title -->
+            <Label text="Welcome Back!"
+                   style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C5364;"/>
+
+            <!-- Username -->
+            <TextField fx:id="usernameField" promptText="Username"
+                       maxWidth="Infinity"
+                       style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #ccc;"/>
+
+            <!-- Password -->
+            <PasswordField fx:id="passwordField" promptText="Password"
+                           maxWidth="Infinity"
+                           style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #ccc;"/>
+
+            <!-- Login Button -->
+            <Button text="Login"
+                    onAction="#onLoginClicked"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: #2C5364; -fx-text-fill: white; -fx-background-radius: 10;"/>
+
+            <!-- Hint -->
+            <Label text="Don't have an account? Contact admin"
+                   style="-fx-font-size: 10px; -fx-text-fill: gray;"/>
+        </VBox>
+    </center>
+</BorderPane>

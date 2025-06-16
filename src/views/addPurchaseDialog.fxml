@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.AddPurchaseDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Add Purchase" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <GridPane vgap="10" hgap="10">
+        <Label text="Inlet:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label fx:id="inletNameLabel" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Product:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label fx:id="productNameLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="quantityField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Cost Price:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="costPriceField" style="-fx-font-weight: bold;"/>
+            <Label text="(Pre-filled with unit price, editable)" style="-fx-font-size: 11px; -fx-text-fill: #666666;"/>
+        </VBox>
+    </GridPane>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#onCancelClicked"/>
+        <Button text="Add Purchase" onAction="#onAddClicked" style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+    </HBox>
+</VBox> 

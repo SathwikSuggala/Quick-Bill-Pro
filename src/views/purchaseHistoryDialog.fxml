@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.PurchaseHistoryDialogController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Purchase History" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- Filter Section -->
+    <GridPane vgap="10" hgap="10">
+        <Label text="Filter by:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        
+        <ComboBox fx:id="yearComboBox" promptText="Select Year" 
+                  prefWidth="120" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+        
+        <ComboBox fx:id="monthComboBox" promptText="Select Month" 
+                  prefWidth="120" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+        
+        <Label text="Or select specific date:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        
+        <ComboBox fx:id="dateComboBox" promptText="Select Date" 
+                  prefWidth="200" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1"/>
+    </GridPane>
+
+    <!-- Purchases Table -->
+    <TableView fx:id="purchasesTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="purchaseIdColumn" text="ID" prefWidth="50"/>
+            <TableColumn fx:id="inletNameColumn" text="Inlet" prefWidth="150"/>
+            <TableColumn fx:id="productNameColumn" text="Product" prefWidth="150"/>
+            <TableColumn fx:id="quantityColumn" text="Quantity" prefWidth="100"/>
+            <TableColumn fx:id="costPriceColumn" text="Cost Price" prefWidth="100"/>
+            <TableColumn fx:id="purchaseDateColumn" text="Date" prefWidth="120"/>
+        </columns>
+    </TableView>
+
+    <!-- Product Filter Section -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Filter by Product:"/>
+        <ComboBox fx:id="productFilterComboBox" promptText="Select Product" prefWidth="200"/>
+        <Button text="Clear Filter" onAction="#onClearProductFilterClicked"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Close" onAction="#onCloseClicked"/>
+    </HBox>
+</VBox> 
