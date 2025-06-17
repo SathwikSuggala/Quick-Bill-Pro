@@ -35,6 +35,10 @@ public class ProductsController implements Initializable {
     @FXML
     private TableColumn<Product, Double> priceColumn;
     @FXML
+    private TableColumn<Product, Double> cgstColumn;
+    @FXML
+    private TableColumn<Product, Double> sgstColumn;
+    @FXML
     private TableColumn<Product, Integer> quantityColumn;
     @FXML
     private TableColumn<Product, String> inletColumn;
@@ -52,6 +56,8 @@ public class ProductsController implements Initializable {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
+        cgstColumn.setCellValueFactory(new PropertyValueFactory<>("cgst"));
+        sgstColumn.setCellValueFactory(new PropertyValueFactory<>("sgst"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         inletColumn.setCellValueFactory(new PropertyValueFactory<>("inletName"));
 

@@ -29,8 +29,16 @@
     <TextField fx:id="quantityField" promptText="Enter quantity" 
                GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
+    <Label text="CGST (%):" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+    <TextField fx:id="cgstField" promptText="Enter CGST" 
+               GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+    <Label text="SGST (%):" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+    <TextField fx:id="sgstField" promptText="Enter SGST" 
+               GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
     <HBox spacing="10" alignment="CENTER_RIGHT" 
-          GridPane.columnIndex="1" GridPane.rowIndex="5">
+          GridPane.columnIndex="1" GridPane.rowIndex="7">
         <Button text="Cancel" onAction="#onCancelClicked" />
         <Button text="Update" onAction="#onUpdateClicked" 
                 style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />

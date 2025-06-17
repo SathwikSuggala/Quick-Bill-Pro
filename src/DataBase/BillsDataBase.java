@@ -11,16 +11,20 @@ import java.util.List;
 
 public class BillsDataBase {
     
-    public static int createBill(int outletId, double totalAmount, String paymentType, String remarks) throws SQLException {
-        String query = "INSERT INTO bills (outlet_id, total_amount, payment_type, remarks) VALUES (?, ?, ?, ?)";
+    public static int createBill(int outletId, double totalCGST, double totalSGST, double totalAmount, 
+                                String paymentType, String remarks) throws SQLException {
+        String query = "INSERT INTO bills (outlet_id, total_CGST, total_SGST, total_amount, payment_type, remarks) " +
+                      "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             
             stmt.setInt(1, outletId);
-            stmt.setDouble(2, totalAmount);
-            stmt.setString(3, paymentType);
-            stmt.setString(4, remarks);
+            stmt.setDouble(2, totalCGST);
+            stmt.setDouble(3, totalSGST);
+            stmt.setDouble(4, totalAmount);
+            stmt.setString(5, paymentType);
+            stmt.setString(6, remarks);
             
             stmt.executeUpdate();
             
@@ -33,8 +37,10 @@ public class BillsDataBase {
         }
     }
     
-    public static void addBillItem(int billId, int productId, int quantity, double price) throws SQLException {
-        String query = "INSERT INTO bill_items (bill_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+    public static void addBillItem(int billId, int productId, int quantity, double price, 
+                                 double cgst, double sgst) throws SQLException {
+        String query = "INSERT INTO bill_items (bill_id, product_id, quantity, price, CGST, SGST) " +
+                      "VALUES (?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -43,6 +49,8 @@ public class BillsDataBase {
             stmt.setInt(2, productId);
             stmt.setInt(3, quantity);
             stmt.setDouble(4, price);
+            stmt.setDouble(5, cgst);
+            stmt.setDouble(6, sgst);
             
             stmt.executeUpdate();
             
@@ -78,6 +86,8 @@ public class BillsDataBase {
                     Bill bill = new Bill(
                         rs.getInt("bill_id"),
                         rs.getInt("outlet_id"),
+                        rs.getDouble("total_CGST"),
+                        rs.getDouble("total_SGST"),
                         rs.getDouble("total_amount"),
                         rs.getDate("bill_date"),
                         rs.getString("payment_type"),
@@ -109,7 +119,9 @@ public class BillsDataBase {
                         rs.getInt("product_id"),
                         rs.getString("product_name"),
                         rs.getInt("quantity"),
-                        rs.getDouble("price")
+                        rs.getDouble("price"),
+                        rs.getDouble("CGST"),
+                        rs.getDouble("SGST")
                     );
                     items.add(item);
                 }
@@ -136,7 +148,9 @@ public class BillsDataBase {
                     rs.getString("description"),
                     rs.getDouble("unit_price"),
                     rs.getInt("quantity"),
-                    rs.getString("inlet_name")
+                    rs.getString("inlet_name"),
+                    rs.getDouble("CGST"),
+                    rs.getDouble("SGST")
                 );
                 products.add(product);
             }

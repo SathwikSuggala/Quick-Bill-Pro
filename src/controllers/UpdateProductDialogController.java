@@ -17,6 +17,10 @@ public class UpdateProductDialogController {
     private TextField priceField;
     @FXML
     private TextField quantityField;
+    @FXML
+    private TextField cgstField;
+    @FXML
+    private TextField sgstField;
 
     private Product product;
     private ProductsDataBase productsDB;
@@ -28,6 +32,8 @@ public class UpdateProductDialogController {
         descriptionField.setText(product.getDescription());
         priceField.setText(String.valueOf(product.getUnitPrice()));
         quantityField.setText(String.valueOf(product.getQuantity()));
+        cgstField.setText(String.valueOf(product.getCgst()));
+        sgstField.setText(String.valueOf(product.getSgst()));
     }
 
     public void setProductsDB(ProductsDataBase productsDB) {
@@ -42,24 +48,29 @@ public class UpdateProductDialogController {
     private void onUpdateClicked() {
         String name = nameField.getText().trim();
         String description = descriptionField.getText().trim();
-        String priceStr = priceField.getText().trim();
-        String quantityStr = quantityField.getText().trim();
+        String priceText = priceField.getText().trim();
+        String quantityText = quantityField.getText().trim();
+        String cgstText = cgstField.getText().trim();
+        String sgstText = sgstField.getText().trim();
 
-        if (name.isEmpty() || description.isEmpty() || priceStr.isEmpty() || quantityStr.isEmpty()) {
-            showAlert("Error", "Please fill in all fields", Alert.AlertType.ERROR);
+        if (name.isEmpty() || priceText.isEmpty() || quantityText.isEmpty() || 
+            cgstText.isEmpty() || sgstText.isEmpty()) {
+            showAlert("Error", "Please fill in all required fields", Alert.AlertType.ERROR);
             return;
         }
 
         try {
-            double price = Double.parseDouble(priceStr);
-            int quantity = Integer.parseInt(quantityStr);
+            double price = Double.parseDouble(priceText);
+            int quantity = Integer.parseInt(quantityText);
+            double cgst = Double.parseDouble(cgstText);
+            double sgst = Double.parseDouble(sgstText);
 
-            if (price <= 0 || quantity <= 0) {
-                showAlert("Error", "Price and quantity must be greater than 0", Alert.AlertType.ERROR);
+            if (price < 0 || quantity < 0 || cgst < 0 || sgst < 0) {
+                showAlert("Error", "Price, quantity, CGST, and SGST must be non-negative", Alert.AlertType.ERROR);
                 return;
             }
 
-            productsDB.updateProductOfInlet(product.getId(), name, description, price, quantity);
+            productsDB.updateProductOfInlet(product.getId(), name, description, price, quantity, cgst, sgst);
             if (onUpdateCallback != null) {
                 onUpdateCallback.run();
             }
@@ -67,7 +78,7 @@ public class UpdateProductDialogController {
             showAlert("Success", "Product updated successfully", Alert.AlertType.INFORMATION);
 
         } catch (NumberFormatException e) {
-            showAlert("Error", "Please enter valid numbers for price and quantity", Alert.AlertType.ERROR);
+            showAlert("Error", "Please enter valid numbers for price, quantity, CGST, and SGST", Alert.AlertType.ERROR);
         }
     }
 

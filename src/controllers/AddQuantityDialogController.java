@@ -13,18 +13,15 @@ public class AddQuantityDialogController {
     @FXML
     private Label productNameLabel;
     @FXML
-    private Label currentQuantityLabel;
-    @FXML
     private TextField quantityField;
 
-    private ProductsDataBase productsDB;
     private Product product;
+    private ProductsDataBase productsDB;
     private Runnable onAddCallback;
 
     public void setProduct(Product product) {
         this.product = product;
         productNameLabel.setText(product.getName());
-        currentQuantityLabel.setText(String.valueOf(product.getQuantity()));
     }
 
     public void setProductsDB(ProductsDataBase productsDB) {
@@ -37,36 +34,36 @@ public class AddQuantityDialogController {
 
     @FXML
     private void onAddClicked() {
-        String quantityStr = quantityField.getText().trim();
+        String quantityText = quantityField.getText().trim();
 
-        if (quantityStr.isEmpty()) {
+        if (quantityText.isEmpty()) {
             showAlert("Error", "Please enter quantity", Alert.AlertType.ERROR);
             return;
         }
 
         try {
-            int quantity = Integer.parseInt(quantityStr);
+            int quantity = Integer.parseInt(quantityText);
 
             if (quantity <= 0) {
                 showAlert("Error", "Quantity must be greater than 0", Alert.AlertType.ERROR);
                 return;
             }
 
-            // Update the product quantity
+            // Update the product with the new quantity while maintaining other values
             productsDB.updateProductOfInlet(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getUnitPrice(),
-                product.getQuantity() + quantity
+                product.getQuantity() + quantity,
+                product.getCgst(),
+                product.getSgst()
             );
 
             if (onAddCallback != null) {
                 onAddCallback.run();
             }
             closeDialog();
-            showAlert("Success", "Quantity added successfully", Alert.AlertType.INFORMATION);
-
         } catch (NumberFormatException e) {
             showAlert("Error", "Please enter a valid number for quantity", Alert.AlertType.ERROR);
         }
@@ -78,7 +75,7 @@ public class AddQuantityDialogController {
     }
 
     private void closeDialog() {
-        Stage stage = (Stage) quantityField.getScene().getWindow();
+        Stage stage = (Stage) productNameLabel.getScene().getWindow();
         stage.close();
     }
 

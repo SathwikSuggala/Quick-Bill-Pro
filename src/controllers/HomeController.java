@@ -18,8 +18,14 @@ public class HomeController {
     
     @FXML
     private void onDashboardClicked() {
-        // TODO: Implement dashboard view
-        showAlert("Dashboard", "Dashboard view will be implemented soon!");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/dashboard.fxml"));
+            Parent dashboardView = loader.load();
+            mainBorderPane.setCenter(dashboardView);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load dashboard page!", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML

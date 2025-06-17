@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -24,7 +23,9 @@ public class AddProductDialogController {
     @FXML
     private TextField priceField;
     @FXML
-    private TextField quantityField;
+    private TextField cgstField;
+    @FXML
+    private TextField sgstField;
 
     private ProductsDataBase productsDB;
     private InletsDataBase inletsDB;
@@ -54,43 +55,36 @@ public class AddProductDialogController {
 
     @FXML
     private void onAddClicked() {
-        String selectedInlet = inletComboBox.getValue();
+        String inletName = inletComboBox.getValue();
         String name = nameField.getText().trim();
         String description = descriptionField.getText().trim();
-        String priceStr = priceField.getText().trim();
-        String quantityStr = quantityField.getText().trim();
+        String priceText = priceField.getText().trim();
+        String cgstText = cgstField.getText().trim();
+        String sgstText = sgstField.getText().trim();
 
-        if (selectedInlet == null || name.isEmpty() || description.isEmpty() || 
-            priceStr.isEmpty() || quantityStr.isEmpty()) {
-            showAlert("Error", "Please fill in all fields", Alert.AlertType.ERROR);
-            return;
-        }
-
-        // Check if product with same name exists
-        ObservableList<Product> existingProducts = productsDB.searchProductsByName(name);
-        if (!existingProducts.isEmpty()) {
-            showAlert("Error", "A product with this name already exists", Alert.AlertType.ERROR);
+        if (inletName == null || inletName.isEmpty() || name.isEmpty() || priceText.isEmpty() || 
+            cgstText.isEmpty() || sgstText.isEmpty()) {
+            showAlert("Error", "Please fill in all required fields", Alert.AlertType.ERROR);
             return;
         }
 
         try {
-            double price = Double.parseDouble(priceStr);
-            int quantity = Integer.parseInt(quantityStr);
+            double price = Double.parseDouble(priceText);
+            double cgst = Double.parseDouble(cgstText);
+            double sgst = Double.parseDouble(sgstText);
 
-            if (price <= 0 || quantity <= 0) {
-                showAlert("Error", "Price and quantity must be greater than 0", Alert.AlertType.ERROR);
+            if (price < 0 || cgst < 0 || sgst < 0) {
+                showAlert("Error", "Price, CGST, and SGST must be non-negative", Alert.AlertType.ERROR);
                 return;
             }
 
-            productsDB.addProductForInlet(selectedInlet, name, description, price, quantity, price);
+            productsDB.addProductForInlet(inletName, name, description, price, cgst, sgst);
             if (onAddCallback != null) {
                 onAddCallback.run();
             }
             closeDialog();
-            showAlert("Success", "Product added successfully", Alert.AlertType.INFORMATION);
-
         } catch (NumberFormatException e) {
-            showAlert("Error", "Please enter valid numbers for price and quantity", Alert.AlertType.ERROR);
+            showAlert("Error", "Please enter valid numbers for price, CGST, and SGST", Alert.AlertType.ERROR);
         }
     }
 
@@ -100,7 +94,7 @@ public class AddProductDialogController {
     }
 
     private void closeDialog() {
-        Stage stage = (Stage) inletComboBox.getScene().getWindow();
+        Stage stage = (Stage) nameField.getScene().getWindow();
         stage.close();
     }
 

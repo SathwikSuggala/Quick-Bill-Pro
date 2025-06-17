@@ -12,7 +12,7 @@ public class ProductsDataBase {
     public ObservableList<Product> getProductsByInletName(String inletName) {
         ObservableList<Product> productsList = FXCollections.observableArrayList();
         String sql = "SELECT p.product_id, p.name, p.description, p.unit_price, " +
-                "s.quantity " +
+                "s.quantity, p.CGST, p.SGST " +
                 "FROM products p " +
                 "JOIN purchases pu ON p.product_id = pu.product_id " +
                 "JOIN inlets i ON pu.inlet_id = i.inlet_id " +
@@ -31,7 +31,9 @@ public class ProductsDataBase {
                             rs.getString("description"),
                             rs.getDouble("unit_price"),
                             rs.getInt("quantity"),
-                            inletName
+                            inletName,
+                            rs.getDouble("CGST"),
+                            rs.getDouble("SGST")
                     );
                     productsList.add(product);
                 }
@@ -45,9 +47,9 @@ public class ProductsDataBase {
 
     // 2. Add product for inlet
     public void addProductForInlet(String inletName, String productName, String description,
-                                   double unitPrice, int quantity, double costPrice) {
-        String insertProductQuery = "INSERT INTO products (inlet_id, name, description, unit_price) " +
-                "VALUES ((SELECT inlet_id FROM inlets WHERE name = ?), ?, ?, ?)";
+                                   double unitPrice, double cgst, double sgst) {
+        String insertProductQuery = "INSERT INTO products (inlet_id, name, description, unit_price, CGST, SGST) " +
+                "VALUES ((SELECT inlet_id FROM inlets WHERE name = ?), ?, ?, ?, ?, ?)";
         String insertStockQuery = "INSERT INTO stock (product_id, quantity) VALUES (last_insert_rowid(), ?)";
 
         try (Connection conn = DBConnection.getConnection()) {
@@ -58,6 +60,8 @@ public class ProductsDataBase {
                     pstmt.setString(2, productName);
                     pstmt.setString(3, description);
                     pstmt.setDouble(4, unitPrice);
+                    pstmt.setDouble(5, cgst);
+                    pstmt.setDouble(6, sgst);
                     pstmt.executeUpdate();
                 }
 
@@ -78,8 +82,8 @@ public class ProductsDataBase {
 
     // 3. Update product of inlet
     public void updateProductOfInlet(int productId, String productName, String description,
-                                     double unitPrice, int quantity) {
-        String updateProductQuery = "UPDATE products SET name = ?, description = ?, unit_price = ? WHERE product_id = ?";
+                                     double unitPrice, int quantity, double cgst, double sgst) {
+        String updateProductQuery = "UPDATE products SET name = ?, description = ?, unit_price = ?, CGST = ?, SGST = ? WHERE product_id = ?";
 
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -87,7 +91,9 @@ public class ProductsDataBase {
                 pstmt.setString(1, productName);
                 pstmt.setString(2, description);
                 pstmt.setDouble(3, unitPrice);
-                pstmt.setInt(4, productId);
+                pstmt.setDouble(4, cgst);
+                pstmt.setDouble(5, sgst);
+                pstmt.setInt(6, productId);
                 pstmt.executeUpdate();
                 conn.commit();
             } catch (SQLException e) {
@@ -103,7 +109,7 @@ public class ProductsDataBase {
     public ObservableList<Product> getAllProductsWithAvailableQuantity() {
         ObservableList<Product> productsList = FXCollections.observableArrayList();
         String sql = "SELECT p.product_id, p.name, p.description, p.unit_price, " +
-                "s.quantity, i.name as inlet_name " +
+                "s.quantity, i.name as inlet_name, p.CGST, p.SGST " +
                 "FROM products p " +
                 "LEFT JOIN stock s ON p.product_id = s.product_id " +
                 "LEFT JOIN inlets i ON p.inlet_id = i.inlet_id";
@@ -119,7 +125,9 @@ public class ProductsDataBase {
                         rs.getString("description"),
                         rs.getDouble("unit_price"),
                         rs.getInt("quantity"),
-                        rs.getString("inlet_name")
+                        rs.getString("inlet_name"),
+                        rs.getDouble("CGST"),
+                        rs.getDouble("SGST")
                 );
                 productsList.add(product);
             }
@@ -134,7 +142,7 @@ public class ProductsDataBase {
     public ObservableList<Product> searchProductsByName(String partialName) {
         ObservableList<Product> productsList = FXCollections.observableArrayList();
         String sql = "SELECT p.product_id, p.name, p.description, p.unit_price, " +
-                "s.quantity, " +
+                "s.quantity, p.CGST, p.SGST, " +
                 "(SELECT i.name FROM inlets i " +
                 "JOIN purchases pu ON i.inlet_id = pu.inlet_id " +
                 "WHERE pu.product_id = p.product_id " +
@@ -155,7 +163,9 @@ public class ProductsDataBase {
                             rs.getString("description"),
                             rs.getDouble("unit_price"),
                             rs.getInt("quantity"),
-                            rs.getString("inlet_name")
+                            rs.getString("inlet_name"),
+                            rs.getDouble("CGST"),
+                            rs.getDouble("SGST")
                     );
                     productsList.add(product);
                 }
@@ -173,7 +183,7 @@ public class ProductsDataBase {
                 "VALUES ((SELECT inlet_id FROM inlets WHERE name = ?), " +
                 "(SELECT product_id FROM products WHERE name = ?), ?, ?, DATE('now'))";
 
-        String updatePriceQuery = "UPDATE products SET unit_price = ? WHERE name = ?";
+        //String updatePriceQuery = "UPDATE products SET unit_price = ? WHERE name = ?";
 
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -188,12 +198,12 @@ public class ProductsDataBase {
                     pstmt.executeUpdate();
                 }
 
-                // Update product price
-                try (PreparedStatement pstmt = conn.prepareStatement(updatePriceQuery)) {
-                    pstmt.setDouble(1, costPrice);
-                    pstmt.setString(2, productName);
-                    pstmt.executeUpdate();
-                }
+//                // Update product price
+//                try (PreparedStatement pstmt = conn.prepareStatement(updatePriceQuery)) {
+//                    pstmt.setDouble(1, costPrice);
+//                    pstmt.setString(2, productName);
+//                    pstmt.executeUpdate();
+//                }
 
                 // Update quantity using same connection
                 addQuantity(conn, productName, quantity);

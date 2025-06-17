@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.DashboardController"
+            style="-fx-background-color: #f5f5f5;">
+    
+    <top>
+        <VBox spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="periodComboBox" prefWidth="150"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+            <VBox spacing="20">
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
+                
+                <!-- Summary Cards -->
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                    </columnConstraints>
+                    
+                    <!-- Sales Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Total Sales" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalSalesLabel" text="₹0.00" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- Purchases Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Total Purchases" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalPurchasesLabel" text="₹0.00" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- Profit Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Total Profit" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalProfitLabel" text="₹0.00" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- Credits Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="Total Credits" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalCreditsLabel" text="₹0.00" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- Payments Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="Total Payments" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalPaymentsLabel" text="₹0.00" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- Pending Credits Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label text="Pending Credits" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="pendingCreditsLabel" text="0" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                </GridPane>
+                
+                <!-- Tax Summary -->
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                    </columnConstraints>
+                    
+                    <!-- CGST Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Total CGST" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalCGSTLabel" text="₹0.00" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- SGST Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Total SGST" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalSGSTLabel" text="₹0.00" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                </GridPane>
+                
+                <!-- Inventory Summary -->
+                <GridPane hgap="20" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                    </columnConstraints>
+                    
+                    <!-- Total Products Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Total Products" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalProductsLabel" text="0" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- Low Stock Products Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Low Stock Products" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="lowStockProductsLabel" text="0" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                    
+                    <!-- Total Outlets Card -->
+                    <VBox style="-fx-background-color: white; -fx-background-radius: 5; -fx-padding: 15;"
+                          GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Total Outlets" style="-fx-font-size: 14px; -fx-text-fill: #666666;"/>
+                        <Label fx:id="totalOutletsLabel" text="0" 
+                               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane> 

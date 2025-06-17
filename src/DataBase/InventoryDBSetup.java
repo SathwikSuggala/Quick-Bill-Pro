@@ -59,6 +59,8 @@ public class InventoryDBSetup {
                     name TEXT NOT NULL,
                     description TEXT,
                     unit_price REAL NOT NULL,
+                    CGST REAL NOT NULL,
+                    SGST REAL NOT NULL,
                     FOREIGN KEY (inlet_id) REFERENCES inlets(inlet_id)
                 );
             """);
@@ -96,6 +98,8 @@ public class InventoryDBSetup {
                 CREATE TABLE IF NOT EXISTS bills (
                     bill_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     outlet_id INTEGER NOT NULL,
+                    total_CGST REAL NOT NULL,
+                    total_SGST REAL NOT NULL,
                     total_amount REAL NOT NULL,
                     bill_date DATE DEFAULT (DATE('now')),
                     payment_type TEXT DEFAULT 'CASH', -- was ENUM in MySQL
@@ -139,6 +143,8 @@ public class InventoryDBSetup {
                     product_id INTEGER NOT NULL,
                     quantity INTEGER NOT NULL,
                     price REAL NOT NULL,
+                    CGST REAL NOT NULL,
+                    SGST REAL NOT NULL,
                     FOREIGN KEY (bill_id) REFERENCES bills(bill_id),
                     FOREIGN KEY (product_id) REFERENCES products(product_id)
                 );

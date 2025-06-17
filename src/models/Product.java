@@ -7,14 +7,18 @@ public class Product {
     private double unitPrice;
     private int quantity;
     private String inletName;
+    private double cgst;
+    private double sgst;
 
-    public Product(int id, String name, String description, double unitPrice, int quantity, String inletName) {
+    public Product(int id, String name, String description, double unitPrice, int quantity, String inletName, double cgst, double sgst) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
         this.inletName = inletName;
+        this.cgst = cgst;
+        this.sgst = sgst;
     }
 
     // Getters
@@ -24,6 +28,8 @@ public class Product {
     public double getUnitPrice() { return unitPrice; }
     public int getQuantity() { return quantity; }
     public String getInletName() { return inletName; }
+    public double getCgst() { return cgst; }
+    public double getSgst() { return sgst; }
 
     // Setters
     public void setId(int id) { this.id = id; }
@@ -32,4 +38,6 @@ public class Product {
     public void setUnitPrice(double unitPrice) { this.unitPrice = unitPrice; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public void setInletName(String inletName) { this.inletName = inletName; }
+    public void setCgst(double cgst) { this.cgst = cgst; }
+    public void setSgst(double sgst) { this.sgst = sgst; }
 } 

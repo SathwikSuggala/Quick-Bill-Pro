@@ -25,13 +25,19 @@ public class BillingController implements Initializable {
     @FXML private ComboBox<Outlet> outletComboBox;
     @FXML private ComboBox<Product> productComboBox;
     @FXML private TextField quantityField;
+    @FXML private Label availableQuantityLabel;
     @FXML private TableView<BillItem> itemsTableView;
     @FXML private TableColumn<BillItem, String> productNameColumn;
     @FXML private TableColumn<BillItem, Integer> quantityColumn;
     @FXML private TableColumn<BillItem, Double> priceColumn;
+    @FXML private TableColumn<BillItem, Double> cgstColumn;
+    @FXML private TableColumn<BillItem, Double> sgstColumn;
     @FXML private TableColumn<BillItem, Double> totalColumn;
     @FXML private TableColumn<BillItem, Void> actionColumn;
     @FXML private Label totalAmountLabel;
+    @FXML private Label totalCGSTLabel;
+    @FXML private Label totalSGSTLabel;
+    @FXML private Label grandTotalLabel;
     @FXML private ComboBox<String> paymentTypeComboBox;
     @FXML private ComboBox<Integer> creditMonthsComboBox;
     @FXML private Label creditMonthsLabel;
@@ -42,6 +48,7 @@ public class BillingController implements Initializable {
     private final OutletsDataBase outletsDataBase = new OutletsDataBase();
     private final ProductsDataBase productsDataBase = new ProductsDataBase();
     private boolean outletSelected = false;
+    private Product selectedProduct = null;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -80,6 +87,8 @@ public class BillingController implements Initializable {
         productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        cgstColumn.setCellValueFactory(new PropertyValueFactory<>("cgst"));
+        sgstColumn.setCellValueFactory(new PropertyValueFactory<>("sgst"));
         totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
         
         actionColumn.setCellFactory(col -> new TableCell<BillItem, Void>() {
@@ -88,7 +97,7 @@ public class BillingController implements Initializable {
                 removeButton.setOnAction(event -> {
                     BillItem item = getTableView().getItems().get(getIndex());
                     billItems.remove(item);
-                    updateTotalAmount();
+                    updateTotals();
                 });
             }
 
@@ -118,6 +127,30 @@ public class BillingController implements Initializable {
             creditMonthsLabel.setManaged(isCredit);
             creditMonthsComboBox.setVisible(isCredit);
             creditMonthsComboBox.setManaged(isCredit);
+        });
+
+        // Update available quantity when product is selected
+        productComboBox.setOnAction(event -> {
+            selectedProduct = productComboBox.getValue();
+            if (selectedProduct != null) {
+                availableQuantityLabel.setText("Available: " + selectedProduct.getQuantity());
+            } else {
+                availableQuantityLabel.setText("Available: 0");
+            }
+        });
+
+        // Validate quantity input
+        quantityField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+                try {
+                    int quantity = Integer.parseInt(newValue);
+                    if (selectedProduct != null && quantity > selectedProduct.getQuantity()) {
+                        quantityField.setText(String.valueOf(selectedProduct.getQuantity()));
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignore invalid input
+                }
+            }
         });
     }
 
@@ -151,11 +184,13 @@ public class BillingController implements Initializable {
             selectedProduct.getId(),
             selectedProduct.getName(),
             quantity,
-            selectedProduct.getUnitPrice()
+            selectedProduct.getUnitPrice(),
+            selectedProduct.getCgst(),
+            selectedProduct.getSgst()
         );
 
         billItems.add(item);
-        updateTotalAmount();
+        updateTotals();
         clearInputFields();
     }
 
@@ -178,6 +213,10 @@ public class BillingController implements Initializable {
                 showError("Error", "Quantity must be greater than 0");
                 return false;
             }
+            if (quantity > selectedProduct.getQuantity()) {
+                showError("Error", "Quantity cannot exceed available stock");
+                return false;
+            }
         } catch (NumberFormatException e) {
             showError("Error", "Invalid quantity");
             return false;
@@ -188,13 +227,29 @@ public class BillingController implements Initializable {
     private void clearInputFields() {
         productComboBox.setValue(null);
         quantityField.clear();
+        availableQuantityLabel.setText("Available: 0");
+        selectedProduct = null;
     }
 
-    private void updateTotalAmount() {
-        double total = billItems.stream()
-            .mapToDouble(BillItem::getTotal)
+    private void updateTotals() {
+        double subtotal = billItems.stream()
+            .mapToDouble(item -> item.getQuantity() * item.getPrice())
             .sum();
-        totalAmountLabel.setText(String.format("%.2f", total));
+        
+        double totalCGST = billItems.stream()
+            .mapToDouble(BillItem::getCgstAmount)
+            .sum();
+            
+        double totalSGST = billItems.stream()
+            .mapToDouble(BillItem::getSgstAmount)
+            .sum();
+            
+        double grandTotal = subtotal + totalCGST + totalSGST;
+
+        totalAmountLabel.setText(String.format("%.2f", subtotal));
+        totalCGSTLabel.setText(String.format("%.2f", totalCGST));
+        totalSGSTLabel.setText(String.format("%.2f", totalSGST));
+        grandTotalLabel.setText(String.format("%.2f", grandTotal));
     }
 
     @FXML
@@ -215,14 +270,26 @@ public class BillingController implements Initializable {
         }
 
         try {
-            double totalAmount = billItems.stream()
-                .mapToDouble(BillItem::getTotal)
+            double subtotal = billItems.stream()
+                .mapToDouble(item -> item.getQuantity() * item.getPrice())
                 .sum();
+            
+            double totalCGST = billItems.stream()
+                .mapToDouble(BillItem::getCgstAmount)
+                .sum();
+                
+            double totalSGST = billItems.stream()
+                .mapToDouble(BillItem::getSgstAmount)
+                .sum();
+                
+            double grandTotal = subtotal + totalCGST + totalSGST;
 
             // Create bill
             int billId = billsDataBase.createBill(
                 outletComboBox.getValue().getId(),
-                totalAmount,
+                totalCGST,
+                totalSGST,
+                grandTotal,
                 paymentTypeComboBox.getValue(),
                 remarksField.getText()
             );
@@ -233,7 +300,9 @@ public class BillingController implements Initializable {
                     billId,
                     item.getProductId(),
                     item.getQuantity(),
-                    item.getPrice()
+                    item.getPrice(),
+                    item.getCgst(),
+                    item.getSgst()
                 );
             }
 
@@ -243,7 +312,7 @@ public class BillingController implements Initializable {
                 billsDataBase.createOutletCredit(
                     outletComboBox.getValue().getId(),
                     billId,
-                    totalAmount,
+                    grandTotal,
                     java.sql.Date.valueOf(dueDate)
                 );
             }
@@ -257,12 +326,13 @@ public class BillingController implements Initializable {
 
     private void clearBill() {
         billItems.clear();
-        updateTotalAmount();
+        updateTotals();
         outletComboBox.setValue(null);
         outletSelected = false;
         paymentTypeComboBox.setValue(null);
         remarksField.clear();
         creditMonthsComboBox.setValue(null);
+        clearInputFields();
     }
 
     private void showError(String title, String content) {
