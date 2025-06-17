@@ -90,8 +90,14 @@ public class HomeController {
 
     @FXML
     private void onReportsClicked() {
-        // TODO: Implement reports view
-        showAlert("Reports", "Reports view will be implemented soon!");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/reports.fxml"));
+            Parent reportsView = loader.load();
+            mainBorderPane.setCenter(reportsView);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Could not load reports page!", Alert.AlertType.ERROR);
+        }
     }
 
     @FXML

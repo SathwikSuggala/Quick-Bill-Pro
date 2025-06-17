@@ -7,6 +7,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -15,11 +18,13 @@ import javafx.util.StringConverter;
 import models.BillItem;
 import models.Outlet;
 import models.Product;
+import models.Bill;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
+import java.io.IOException;
 
 public class BillingController implements Initializable {
     @FXML private ComboBox<Outlet> outletComboBox;
@@ -291,7 +296,8 @@ public class BillingController implements Initializable {
                 totalSGST,
                 grandTotal,
                 paymentTypeComboBox.getValue(),
-                remarksField.getText()
+                remarksField.getText(),
+                java.sql.Date.valueOf(LocalDate.now())
             );
 
             // Add bill items
@@ -306,6 +312,14 @@ public class BillingController implements Initializable {
                 );
             }
 
+            // Retrieve the newly created bill with its items
+            Bill createdBill = billsDataBase.getBillById(billId);
+            if (createdBill == null) {
+                showError("Error", "Failed to retrieve generated bill.");
+                return;
+            }
+            createdBill.setBillItems(billItems);
+
             // If credit payment, create outlet credit
             if ("Credit".equals(paymentTypeComboBox.getValue())) {
                 LocalDate dueDate = LocalDate.now().plusMonths(creditMonthsComboBox.getValue());
@@ -317,10 +331,45 @@ public class BillingController implements Initializable {
                 );
             }
 
-            showSuccess("Success", "Bill generated successfully");
+            // Open bill soft copy page
+            openBillSoftCopyPage(createdBill, outletComboBox.getValue().getName(), outletComboBox.getValue().getAddress());
+
             clearBill();
         } catch (SQLException e) {
             showError("Error", "Failed to generate bill: " + e.getMessage());
+        }
+    }
+
+    private void openBillSoftCopyPage(Bill bill, String outletName, String outletAddress) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/bill_soft_copy.fxml"));
+            Parent root = loader.load();
+
+            BillSoftCopyController controller = loader.getController();
+            
+            // Create a new Bill object with a copy of the billItems
+            Bill billForSoftCopy = new Bill(
+                bill.getBillId(),
+                bill.getOutletId(),
+                bill.getTotalCGST(),
+                bill.getTotalSGST(),
+                bill.getTotalAmount(),
+                bill.getBillDate(),
+                bill.getPaymentType(),
+                bill.getRemarks()
+            );
+            billForSoftCopy.setBillItems(FXCollections.observableArrayList(bill.getBillItems()));
+
+            controller.setBillData(billForSoftCopy, outletName, outletAddress);
+
+            Stage stage = new Stage();
+            stage.setTitle("Bill Soft Copy");
+            Scene scene = new Scene(root, 800, 700); // Set a preferred size for the scene
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            showError("Error", "Failed to open bill soft copy page: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -337,14 +386,6 @@ public class BillingController implements Initializable {
 
     private void showError(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    private void showSuccess(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);

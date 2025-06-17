@@ -8,13 +8,17 @@ import models.Product;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import javafx.collections.FXCollections;
 
 public class BillsDataBase {
     
     public static int createBill(int outletId, double totalCGST, double totalSGST, double totalAmount, 
-                                String paymentType, String remarks) throws SQLException {
-        String query = "INSERT INTO bills (outlet_id, total_CGST, total_SGST, total_amount, payment_type, remarks) " +
-                      "VALUES (?, ?, ?, ?, ?, ?)";
+                                String paymentType, String remarks, Date billDate) throws SQLException {
+        String query = "INSERT INTO bills (outlet_id, total_CGST, total_SGST, total_amount, payment_type, remarks, bill_date) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?)";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -25,6 +29,8 @@ public class BillsDataBase {
             stmt.setDouble(4, totalAmount);
             stmt.setString(5, paymentType);
             stmt.setString(6, remarks);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            stmt.setString(7, dateFormat.format(billDate));
             
             stmt.executeUpdate();
             
@@ -83,13 +89,16 @@ public class BillsDataBase {
             
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
+                    String dateString = rs.getString("bill_date");
+                    Date billDate = parseDate(dateString);
+
                     Bill bill = new Bill(
                         rs.getInt("bill_id"),
                         rs.getInt("outlet_id"),
                         rs.getDouble("total_CGST"),
                         rs.getDouble("total_SGST"),
                         rs.getDouble("total_amount"),
-                        rs.getDate("bill_date"),
+                        billDate,
                         rs.getString("payment_type"),
                         rs.getString("remarks")
                     );
@@ -337,6 +346,83 @@ public class BillsDataBase {
             return "OVERDUE";
         } else {
             return "PENDING";
+        }
+    }
+    
+    public static Bill getBillById(int billId) throws SQLException {
+        String query = "SELECT b.*, o.name as outlet_name, o.address as outlet_address FROM bills b " +
+                      "JOIN outlets o ON b.outlet_id = o.outlet_id " +
+                      "WHERE b.bill_id = ?";
+        Bill bill = null;
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            stmt.setInt(1, billId);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String dateString = rs.getString("bill_date");
+                    Date billDate = parseDate(dateString);
+
+                    bill = new Bill(
+                        rs.getInt("bill_id"),
+                        rs.getInt("outlet_id"),
+                        rs.getDouble("total_CGST"),
+                        rs.getDouble("total_SGST"),
+                        rs.getDouble("total_amount"),
+                        billDate,
+                        rs.getString("payment_type"),
+                        rs.getString("remarks")
+                    );
+                    bill.setBillItems(FXCollections.observableArrayList(getBillItems(billId)));
+                }
+            }
+        }
+        return bill;
+    }
+
+    public static String getOutletNameForBill(int billId) throws SQLException {
+        String query = "SELECT o.name FROM bills b JOIN outlets o ON b.outlet_id = o.outlet_id WHERE b.bill_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, billId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("name");
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String getOutletAddressForBill(int billId) throws SQLException {
+        String query = "SELECT o.address FROM bills b JOIN outlets o ON b.outlet_id = o.outlet_id WHERE b.bill_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, billId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("address");
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Date parseDate(String dateString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            // Try parsing as YYYY-MM-DD
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            try {
+                // If that fails, try parsing as a Unix timestamp (long string)
+                return new Date(Long.parseLong(dateString));
+            } catch (NumberFormatException ex) {
+                System.err.println("Error parsing date string: " + dateString + ", Reason: " + ex.getMessage());
+                return null; // Or throw an exception, depending on desired error handling
+            }
         }
     }
 } 

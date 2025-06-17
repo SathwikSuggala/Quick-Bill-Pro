@@ -70,7 +70,7 @@
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
                             <image>
-                                <Image url="@../assets/icons/credit.png"/>
+                                <Image url="@../assets/icons/creditmanagement.png"/>
                             </image>
                         </ImageView>
                         <Text text="Credit Management" fill="WHITE" style="-fx-font-size: 14px;"/>

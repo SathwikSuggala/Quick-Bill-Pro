@@ -1,5 +1,8 @@
 package models;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.Date;
 
 public class Bill {
@@ -11,6 +14,7 @@ public class Bill {
     private Date billDate;
     private String paymentType;
     private String remarks;
+    private ObservableList<BillItem> billItems;
     
     public Bill(int billId, int outletId, double totalCGST, double totalSGST, double totalAmount, 
                 Date billDate, String paymentType, String remarks) {
@@ -22,6 +26,7 @@ public class Bill {
         this.billDate = billDate;
         this.paymentType = paymentType;
         this.remarks = remarks;
+        this.billItems = FXCollections.observableArrayList();
     }
     
     // Getters
@@ -33,6 +38,7 @@ public class Bill {
     public Date getBillDate() { return billDate; }
     public String getPaymentType() { return paymentType; }
     public String getRemarks() { return remarks; }
+    public ObservableList<BillItem> getBillItems() { return billItems; }
     
     // Setters
     public void setBillId(int billId) { this.billId = billId; }
@@ -43,4 +49,5 @@ public class Bill {
     public void setBillDate(Date billDate) { this.billDate = billDate; }
     public void setPaymentType(String paymentType) { this.paymentType = paymentType; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+    public void setBillItems(ObservableList<BillItem> billItems) { this.billItems = billItems; }
 } 
