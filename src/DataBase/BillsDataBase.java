@@ -1,17 +1,17 @@
 package DataBase;
 
+import javafx.collections.FXCollections;
 import models.Bill;
 import models.BillItem;
 import models.OutletCredit;
 import models.Product;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import javafx.collections.FXCollections;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class BillsDataBase {
     
@@ -110,7 +110,7 @@ public class BillsDataBase {
     }
     
     public static List<BillItem> getBillItems(int billId) throws SQLException {
-        String query = "SELECT bi.*, p.name as product_name FROM bill_items bi " +
+        String query = "SELECT bi.*, p.name as product_name, p.HSN as hsn FROM bill_items bi " +
                       "JOIN products p ON bi.product_id = p.product_id " +
                       "WHERE bi.bill_id = ?";
         List<BillItem> items = new ArrayList<>();
@@ -130,7 +130,8 @@ public class BillsDataBase {
                         rs.getInt("quantity"),
                         rs.getDouble("price"),
                         rs.getDouble("CGST"),
-                        rs.getDouble("SGST")
+                        rs.getDouble("SGST"),
+                        rs.getDouble("hsn")
                     );
                     items.add(item);
                 }
@@ -159,7 +160,8 @@ public class BillsDataBase {
                     rs.getInt("quantity"),
                     rs.getString("inlet_name"),
                     rs.getDouble("CGST"),
-                    rs.getDouble("SGST")
+                    rs.getDouble("SGST"),
+                    rs.getDouble("HSN")
                 );
                 products.add(product);
             }

@@ -12,7 +12,7 @@ public class ProductsDataBase {
     public ObservableList<Product> getProductsByInletName(String inletName) {
         ObservableList<Product> productsList = FXCollections.observableArrayList();
         String sql = "SELECT p.product_id, p.name, p.description, p.unit_price, " +
-                "s.quantity, p.CGST, p.SGST " +
+                "s.quantity, p.CGST, p.SGST, p.HSN " +
                 "FROM products p " +
                 "JOIN purchases pu ON p.product_id = pu.product_id " +
                 "JOIN inlets i ON pu.inlet_id = i.inlet_id " +
@@ -33,7 +33,8 @@ public class ProductsDataBase {
                             rs.getInt("quantity"),
                             inletName,
                             rs.getDouble("CGST"),
-                            rs.getDouble("SGST")
+                            rs.getDouble("SGST"),
+                            rs.getDouble("HSN")
                     );
                     productsList.add(product);
                 }
@@ -47,9 +48,9 @@ public class ProductsDataBase {
 
     // 2. Add product for inlet
     public void addProductForInlet(String inletName, String productName, String description,
-                                   double unitPrice, double cgst, double sgst) {
-        String insertProductQuery = "INSERT INTO products (inlet_id, name, description, unit_price, CGST, SGST) " +
-                "VALUES ((SELECT inlet_id FROM inlets WHERE name = ?), ?, ?, ?, ?, ?)";
+                                   double unitPrice, double cgst, double sgst, double hsn) {
+        String insertProductQuery = "INSERT INTO products (inlet_id, name, description, unit_price, CGST, SGST, HSN) " +
+                "VALUES ((SELECT inlet_id FROM inlets WHERE name = ?), ?, ?, ?, ?, ?, ?)";
         String insertStockQuery = "INSERT INTO stock (product_id, quantity) VALUES (last_insert_rowid(), ?)";
 
         try (Connection conn = DBConnection.getConnection()) {
@@ -62,6 +63,7 @@ public class ProductsDataBase {
                     pstmt.setDouble(4, unitPrice);
                     pstmt.setDouble(5, cgst);
                     pstmt.setDouble(6, sgst);
+                    pstmt.setDouble(7, hsn);
                     pstmt.executeUpdate();
                 }
 
@@ -82,8 +84,8 @@ public class ProductsDataBase {
 
     // 3. Update product of inlet
     public void updateProductOfInlet(int productId, String productName, String description,
-                                     double unitPrice, int quantity, double cgst, double sgst) {
-        String updateProductQuery = "UPDATE products SET name = ?, description = ?, unit_price = ?, CGST = ?, SGST = ? WHERE product_id = ?";
+                                     double unitPrice, int quantity, double cgst, double sgst, double hsn) {
+        String updateProductQuery = "UPDATE products SET name = ?, description = ?, unit_price = ?, CGST = ?, SGST = ?, HSN = ? WHERE product_id = ?";
 
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -93,7 +95,8 @@ public class ProductsDataBase {
                 pstmt.setDouble(3, unitPrice);
                 pstmt.setDouble(4, cgst);
                 pstmt.setDouble(5, sgst);
-                pstmt.setInt(6, productId);
+                pstmt.setDouble(6, hsn);
+                pstmt.setInt(7, productId);
                 pstmt.executeUpdate();
                 conn.commit();
             } catch (SQLException e) {
@@ -109,7 +112,7 @@ public class ProductsDataBase {
     public ObservableList<Product> getAllProductsWithAvailableQuantity() {
         ObservableList<Product> productsList = FXCollections.observableArrayList();
         String sql = "SELECT p.product_id, p.name, p.description, p.unit_price, " +
-                "s.quantity, i.name as inlet_name, p.CGST, p.SGST " +
+                "s.quantity, i.name as inlet_name, p.CGST, p.SGST, p.HSN " +
                 "FROM products p " +
                 "LEFT JOIN stock s ON p.product_id = s.product_id " +
                 "LEFT JOIN inlets i ON p.inlet_id = i.inlet_id";
@@ -127,7 +130,8 @@ public class ProductsDataBase {
                         rs.getInt("quantity"),
                         rs.getString("inlet_name"),
                         rs.getDouble("CGST"),
-                        rs.getDouble("SGST")
+                        rs.getDouble("SGST"),
+                        rs.getDouble("HSN")
                 );
                 productsList.add(product);
             }
@@ -142,7 +146,7 @@ public class ProductsDataBase {
     public ObservableList<Product> searchProductsByName(String partialName) {
         ObservableList<Product> productsList = FXCollections.observableArrayList();
         String sql = "SELECT p.product_id, p.name, p.description, p.unit_price, " +
-                "s.quantity, p.CGST, p.SGST, " +
+                "s.quantity, p.CGST, p.SGST, p.HSN, " +
                 "(SELECT i.name FROM inlets i " +
                 "JOIN purchases pu ON i.inlet_id = pu.inlet_id " +
                 "WHERE pu.product_id = p.product_id " +
@@ -165,7 +169,8 @@ public class ProductsDataBase {
                             rs.getInt("quantity"),
                             rs.getString("inlet_name"),
                             rs.getDouble("CGST"),
-                            rs.getDouble("SGST")
+                            rs.getDouble("SGST"),
+                            rs.getDouble("HSN")
                     );
                     productsList.add(product);
                 }

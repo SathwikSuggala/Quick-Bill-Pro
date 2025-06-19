@@ -28,9 +28,17 @@
             <Label text="Contact Info:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
             <TextField fx:id="contactField" GridPane.columnIndex="1" GridPane.rowIndex="2"
                      style="-fx-background-radius: 5;"/>
-            
+
+            <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <TextField fx:id="emailField" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                     style="-fx-background-radius: 5;"/>
+
+            <Label text="GSTIN:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <TextField fx:id="gstinField" GridPane.columnIndex="1" GridPane.rowIndex="4"
+                     style="-fx-background-radius: 5;"/>
+
             <Button text="Add Outlet" onAction="#onAddOutletClicked" 
-                    GridPane.columnIndex="1" GridPane.rowIndex="3"
+                    GridPane.columnIndex="1" GridPane.rowIndex="5"
                     style="-fx-background-color: #2C5364; -fx-text-fill: white; -fx-background-radius: 5;"/>
         </GridPane>
     </VBox>
@@ -49,6 +57,8 @@
                 <TableColumn fx:id="nameColumn" text="Name" prefWidth="200"/>
                 <TableColumn fx:id="addressColumn" text="Address" prefWidth="250"/>
                 <TableColumn fx:id="contactColumn" text="Contact Info" prefWidth="200"/>
+                <TableColumn fx:id="emailColumn" text="Email" prefWidth="200"/>
+                <TableColumn fx:id="gstinColumn" text="GSTIN" prefWidth="150"/>
                 <TableColumn fx:id="billCountColumn" text="Bills" prefWidth="100"/>
             </columns>
         </TableView>

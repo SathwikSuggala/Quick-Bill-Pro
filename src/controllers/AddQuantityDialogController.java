@@ -57,7 +57,8 @@ public class AddQuantityDialogController {
                 product.getUnitPrice(),
                 product.getQuantity() + quantity,
                 product.getCgst(),
-                product.getSgst()
+                product.getSgst(),
+                    product.getHsn()
             );
 
             if (onAddCallback != null) {

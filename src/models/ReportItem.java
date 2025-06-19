@@ -54,4 +54,20 @@ public class ReportItem {
     public double getCgst() { return cgst.get(); }
     public double getSgst() { return sgst.get(); }
     public double getTotalAmount() { return totalAmount.get(); }
+    public double getPrice() {
+        return unitPrice.get();
+    }
+    public double getTaxableAmount() {
+        return unitPrice.get()*quantity.get();
+    }
+    public double getCgstAmount(){
+        return getTaxableAmount()*(getCgst()/100);
+    }
+    public double getSgstAmount(){
+        return getTaxableAmount()*(getSgst()/100);
+    }
+    public double getTotal(){
+        return getTotalAmount();
+    }
+
 } 

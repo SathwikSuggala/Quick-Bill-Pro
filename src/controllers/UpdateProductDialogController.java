@@ -21,6 +21,8 @@ public class UpdateProductDialogController {
     private TextField cgstField;
     @FXML
     private TextField sgstField;
+    @FXML
+    private TextField hsnField;
 
     private Product product;
     private ProductsDataBase productsDB;
@@ -30,6 +32,7 @@ public class UpdateProductDialogController {
         this.product = product;
         nameField.setText(product.getName());
         descriptionField.setText(product.getDescription());
+        hsnField.setText(String.valueOf(product.getHsn()));
         priceField.setText(String.valueOf(product.getUnitPrice()));
         quantityField.setText(String.valueOf(product.getQuantity()));
         cgstField.setText(String.valueOf(product.getCgst()));
@@ -52,9 +55,10 @@ public class UpdateProductDialogController {
         String quantityText = quantityField.getText().trim();
         String cgstText = cgstField.getText().trim();
         String sgstText = sgstField.getText().trim();
+        String hsnText = hsnField.getText().trim();
 
         if (name.isEmpty() || priceText.isEmpty() || quantityText.isEmpty() || 
-            cgstText.isEmpty() || sgstText.isEmpty()) {
+            cgstText.isEmpty() || sgstText.isEmpty() || hsnText.isEmpty()) {
             showAlert("Error", "Please fill in all required fields", Alert.AlertType.ERROR);
             return;
         }
@@ -64,13 +68,14 @@ public class UpdateProductDialogController {
             int quantity = Integer.parseInt(quantityText);
             double cgst = Double.parseDouble(cgstText);
             double sgst = Double.parseDouble(sgstText);
+            double hsn = Double.parseDouble(hsnText);
 
             if (price < 0 || quantity < 0 || cgst < 0 || sgst < 0) {
                 showAlert("Error", "Price, quantity, CGST, and SGST must be non-negative", Alert.AlertType.ERROR);
                 return;
             }
 
-            productsDB.updateProductOfInlet(product.getId(), name, description, price, quantity, cgst, sgst);
+            productsDB.updateProductOfInlet(product.getId(), name, description, price, quantity, cgst, sgst, hsn);
             if (onUpdateCallback != null) {
                 onUpdateCallback.run();
             }

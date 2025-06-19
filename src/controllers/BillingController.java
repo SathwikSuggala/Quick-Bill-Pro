@@ -38,6 +38,7 @@ public class BillingController implements Initializable {
     @FXML private TableColumn<BillItem, Double> cgstColumn;
     @FXML private TableColumn<BillItem, Double> sgstColumn;
     @FXML private TableColumn<BillItem, Double> totalColumn;
+    @FXML private TableColumn<BillItem, Double> hsnColumn;
     @FXML private TableColumn<BillItem, Void> actionColumn;
     @FXML private Label totalAmountLabel;
     @FXML private Label totalCGSTLabel;
@@ -90,6 +91,7 @@ public class BillingController implements Initializable {
 
     private void setupTable() {
         productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        hsnColumn.setCellValueFactory(new PropertyValueFactory<>("hsn"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
         cgstColumn.setCellValueFactory(new PropertyValueFactory<>("cgst"));
@@ -191,7 +193,8 @@ public class BillingController implements Initializable {
             quantity,
             selectedProduct.getUnitPrice(),
             selectedProduct.getCgst(),
-            selectedProduct.getSgst()
+            selectedProduct.getSgst(),
+            selectedProduct.getHsn()
         );
 
         billItems.add(item);

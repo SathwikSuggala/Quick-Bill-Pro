@@ -20,11 +20,15 @@ public class OutletsController implements Initializable {
     @FXML private TextField nameField;
     @FXML private TextField addressField;
     @FXML private TextField contactField;
+    @FXML private TextField emailField;
+    @FXML private TextField gstinField;
     @FXML private TableView<Outlet> outletsTable;
     @FXML private TableColumn<Outlet, Integer> idColumn;
     @FXML private TableColumn<Outlet, String> nameColumn;
     @FXML private TableColumn<Outlet, String> addressColumn;
     @FXML private TableColumn<Outlet, String> contactColumn;
+    @FXML private TableColumn<Outlet, String> emailColumn;
+    @FXML private TableColumn<Outlet, String> gstinColumn;
 //    @FXML private TableColumn<Outlet, Integer> billCountColumn;
 
     private final OutletsDataBase outletsDB = new OutletsDataBase();
@@ -37,6 +41,8 @@ public class OutletsController implements Initializable {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         addressColumn.setCellValueFactory(new PropertyValueFactory<>("address"));
         contactColumn.setCellValueFactory(new PropertyValueFactory<>("contactInfo"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        gstinColumn.setCellValueFactory(new PropertyValueFactory<>("gstin"));
 //        billCountColumn.setCellValueFactory(new PropertyValueFactory<>("billCount"));
 
         // Set the table's items
@@ -51,13 +57,15 @@ public class OutletsController implements Initializable {
         String name = nameField.getText().trim();
         String address = addressField.getText().trim();
         String contact = contactField.getText().trim();
+        String email = emailField.getText().trim();
+        String gstin = gstinField.getText().trim();
 
-        if (name.isEmpty() || address.isEmpty() || contact.isEmpty()) {
+        if (name.isEmpty() || address.isEmpty() || contact.isEmpty() || email.isEmpty() || gstin.isEmpty()) {
             showAlert("Error", "Please fill in all fields", Alert.AlertType.ERROR);
             return;
         }
 
-        outletsDB.createNewOutlet(name, address, contact);
+        outletsDB.createNewOutlet(name, address, contact, email, gstin);
         clearFields();
         refreshOutlets();
         showAlert("Success", "Outlet added successfully", Alert.AlertType.INFORMATION);
@@ -77,6 +85,8 @@ public class OutletsController implements Initializable {
         nameField.clear();
         addressField.clear();
         contactField.clear();
+        emailField.clear();
+        gstinField.clear();
     }
 
     private void showAlert(String title, String content, Alert.AlertType type) {

@@ -15,6 +15,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import models.Bill;
 import models.BillItem;
+import models.BillViewItem;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import models.ReportItem;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -81,6 +85,20 @@ public class BillSoftCopyController implements Initializable {
         grandTotalText.setText(String.format("₹%.2f", bill.getTotalAmount()));
     }
 
+    public void setBillDetails(BillViewItem billDetails) {
+        billNoText.setText(String.valueOf(billDetails.getBillId()));
+        billDateText.setText(billDetails.getBillDate());
+        receiverNameText.setText(billDetails.getOutletName());
+        receiverAddressText.setText(billDetails.getOutletAddress());
+        totalCGSTText.setText(String.format("₹%.2f", billDetails.getTotalCGST()));
+        totalSGSTText.setText(String.format("₹%.2f", billDetails.getTotalSGST()));
+        grandTotalText.setText(String.format("₹%.2f", billDetails.getTotalAmount()));
+        
+        // Calculate subtotal
+        double subtotal = billDetails.getTotalAmount() - billDetails.getTotalCGST() - billDetails.getTotalSGST();
+        subTotalText.setText(String.format("₹%.2f", subtotal));
+    }
+
     @FXML
     private void onPrintButtonClicked() {
         PrinterJob job = PrinterJob.createPrinterJob();
@@ -103,6 +121,14 @@ public class BillSoftCopyController implements Initializable {
             // Reset TableView height
             billItemsTable.setPrefHeight(originalTablePrefHeight);
             billContentVBox.layout();
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void setBillItems(java.util.List<ReportItem> items) {
+        if (billItemsTable != null && items != null) {
+            ObservableList data = FXCollections.observableArrayList(items);
+            billItemsTable.setItems(data);
         }
     }
 }

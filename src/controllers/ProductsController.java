@@ -43,6 +43,8 @@ public class ProductsController implements Initializable {
     @FXML
     private TableColumn<Product, String> inletColumn;
     @FXML
+    private TableColumn<Product, Double> hsnColumn;
+    @FXML
     private TableColumn<Product, Void> actionColumn;
 
     private final ProductsDataBase productsDB = new ProductsDataBase();
@@ -60,6 +62,7 @@ public class ProductsController implements Initializable {
         sgstColumn.setCellValueFactory(new PropertyValueFactory<>("sgst"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         inletColumn.setCellValueFactory(new PropertyValueFactory<>("inletName"));
+        hsnColumn.setCellValueFactory(new PropertyValueFactory<>("hsn"));
 
         // Set up action column with purchase and update buttons
         actionColumn.setCellFactory(col -> new TableCell<Product, Void>() {

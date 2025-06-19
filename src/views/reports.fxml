@@ -47,6 +47,7 @@
                     <TableColumn fx:id="cgstColumn" text="CGST" prefWidth="80"/>
                     <TableColumn fx:id="sgstColumn" text="SGST" prefWidth="80"/>
                     <TableColumn fx:id="totalAmountColumn" text="Total Amount" prefWidth="120"/>
+                    <TableColumn fx:id="viewBillColumn" text="View Bill" prefWidth="100"/>
                 </columns>
             </TableView>
         </VBox>

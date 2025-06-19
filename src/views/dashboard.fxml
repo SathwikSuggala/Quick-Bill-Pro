@@ -19,6 +19,8 @@
                 <Label text="Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <ComboBox fx:id="periodComboBox" prefWidth="150"/>
+                <Button text="Show Sales Chart" onAction="#showSalesChart" 
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
             </HBox>
         </VBox>
     </top>

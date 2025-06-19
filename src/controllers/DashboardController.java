@@ -1,16 +1,24 @@
 package controllers;
 
 import DataBase.DashboardDataBase;
+import DataBase.DBConnection;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import models.DashboardStats;
+import utils.ChartGenerator;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JPanel;
 
 public class DashboardController implements Initializable {
     @FXML private ComboBox<String> periodComboBox;
@@ -139,5 +147,44 @@ public class DashboardController implements Initializable {
         } else {
             System.out.println("totalOutletsLabel is null");
         }
+    }
+
+    private void createSalesChart() {
+        try {
+            Map<String, Double> salesData = new HashMap<>();
+            // Get sales data for the last 6 months
+            String query = "SELECT strftime('%Y-%m', bill_date) as month, " +
+                         "SUM(total_amount) as total " +
+                         "FROM bills " +
+                         "WHERE bill_date >= date('now', '-6 months') " +
+                         "GROUP BY month " +
+                         "ORDER BY month";
+            
+            try (Connection conn = DBConnection.getConnection();
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(query)) {
+                
+                while (rs.next()) {
+                    salesData.put(rs.getString("month"), rs.getDouble("total"));
+                }
+            }
+            
+            JPanel chart = ChartGenerator.createBarChart(
+                "Sales Over Last 6 Months",
+                "Month",
+                "Total Sales (₹)",
+                salesData
+            );
+            ChartGenerator.displayChart(chart);
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // TODO: Show error message to user
+        }
+    }
+
+    @FXML
+    private void showSalesChart() {
+        Platform.runLater(this::createSalesChart);
     }
 } 

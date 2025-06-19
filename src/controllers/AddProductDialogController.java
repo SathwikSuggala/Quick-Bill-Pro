@@ -26,6 +26,8 @@ public class AddProductDialogController {
     private TextField cgstField;
     @FXML
     private TextField sgstField;
+    @FXML
+    private TextField hsnField;
 
     private ProductsDataBase productsDB;
     private InletsDataBase inletsDB;
@@ -61,9 +63,10 @@ public class AddProductDialogController {
         String priceText = priceField.getText().trim();
         String cgstText = cgstField.getText().trim();
         String sgstText = sgstField.getText().trim();
+        String hsnText = hsnField.getText().trim();
 
         if (inletName == null || inletName.isEmpty() || name.isEmpty() || priceText.isEmpty() || 
-            cgstText.isEmpty() || sgstText.isEmpty()) {
+            cgstText.isEmpty() || sgstText.isEmpty() || hsnText.isEmpty()) {
             showAlert("Error", "Please fill in all required fields", Alert.AlertType.ERROR);
             return;
         }
@@ -72,13 +75,14 @@ public class AddProductDialogController {
             double price = Double.parseDouble(priceText);
             double cgst = Double.parseDouble(cgstText);
             double sgst = Double.parseDouble(sgstText);
+            double hsn = Double.parseDouble(hsnText);
 
             if (price < 0 || cgst < 0 || sgst < 0) {
                 showAlert("Error", "Price, CGST, and SGST must be non-negative", Alert.AlertType.ERROR);
                 return;
             }
 
-            productsDB.addProductForInlet(inletName, name, description, price, cgst, sgst);
+            productsDB.addProductForInlet(inletName, name, description, price, cgst, sgst, hsn);
             if (onAddCallback != null) {
                 onAddCallback.run();
             }

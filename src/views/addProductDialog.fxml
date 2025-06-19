@@ -21,14 +21,17 @@
         <Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
         <TextField fx:id="descriptionField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-        <Label text="Unit Price:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-        <TextField fx:id="priceField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        <Label text="HSN:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="hsnField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-        <Label text="CGST (%):" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-        <TextField fx:id="cgstField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <Label text="Unit Price:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextField fx:id="priceField" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-        <Label text="SGST (%):" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-        <TextField fx:id="sgstField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        <Label text="CGST (%):" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <TextField fx:id="cgstField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+        <Label text="SGST (%):" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        <TextField fx:id="sgstField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
     </GridPane>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">

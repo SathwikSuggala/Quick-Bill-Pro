@@ -47,6 +47,8 @@ public class InventoryDBSetup {
                     outlet_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
                     address TEXT,
+                    email TEXT,
+                    GSTIN TEXT,
                     contact_info TEXT
                 );
             """);
@@ -58,6 +60,7 @@ public class InventoryDBSetup {
                     inlet_id INTEGER NOT NULL,
                     name TEXT NOT NULL,
                     description TEXT,
+                    HSN REAL,
                     unit_price REAL NOT NULL,
                     CGST REAL NOT NULL,
                     SGST REAL NOT NULL,

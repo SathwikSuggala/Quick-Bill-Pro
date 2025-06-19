@@ -20,9 +20,10 @@ public class BillItem {
     private final DoubleProperty cgstAmount;
     private final DoubleProperty sgstAmount;
     private final DoubleProperty taxableAmount;
+    private final DoubleProperty hsn;
     
     public BillItem(int billItemId, int billId, int productId, String productName, 
-                   int quantity, double price, double cgst, double sgst) {
+                   int quantity, double price, double cgst, double sgst, double hsn) {
         this.billItemId = new SimpleIntegerProperty(billItemId);
         this.billId = new SimpleIntegerProperty(billId);
         this.productId = new SimpleIntegerProperty(productId);
@@ -31,6 +32,7 @@ public class BillItem {
         this.price = new SimpleDoubleProperty(price);
         this.cgst = new SimpleDoubleProperty(cgst);
         this.sgst = new SimpleDoubleProperty(sgst);
+        this.hsn = new SimpleDoubleProperty(hsn);
 
         double subtotalVal = quantity * price;
         double cgstAmtVal = subtotalVal * (cgst / 100.0);
@@ -55,6 +57,7 @@ public class BillItem {
     public DoubleProperty cgstAmountProperty() { return cgstAmount; }
     public DoubleProperty sgstAmountProperty() { return sgstAmount; }
     public DoubleProperty taxableAmountProperty() { return taxableAmount; }
+    public DoubleProperty hsnProperty() { return hsn; }
 
     // Existing Getters (can remain for other uses)
     public int getBillItemId() { return billItemId.get(); }
@@ -69,6 +72,7 @@ public class BillItem {
     public double getCgstAmount() { return cgstAmount.get(); }
     public double getSgstAmount() { return sgstAmount.get(); }
     public double getTaxableAmount() { return taxableAmount.get(); }
+    public double getHsn() { return hsn.get(); }
     
     // Setters (if needed, currently not used by BillSoftCopyController)
     public void setBillItemId(int billItemId) { this.billItemId.set(billItemId); }
@@ -79,4 +83,5 @@ public class BillItem {
     public void setPrice(double price) { this.price.set(price); }
     public void setCgst(double cgst) { this.cgst.set(cgst); }
     public void setSgst(double sgst) { this.sgst.set(sgst); }
+    public void setHsn(double hsn) { this.hsn.set(hsn); }
 } 
