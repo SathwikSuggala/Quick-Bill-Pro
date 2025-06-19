@@ -5,110 +5,165 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.BillSoftCopyController"
-            style="-fx-background-color: white;" fx:id="billRootPane">
+            fx:id="billRootPane"
+            fitToWidth="true" fitToHeight="false"
+            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            style="-fx-background-color: white;">
 
-    <top>
-        <VBox alignment="CENTER" spacing="10">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            <Text text="TAX INVOICE" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-            <Text text="LEELA SAI AGENCIES" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
-            <Text text="Near B.N.R. Building, Kathepu Veedhi Centre, ELURU-1" style="-fx-font-size: 14px;"/>
-            <Text text="GSTIN : 37DVGPS9830G1Z0" style="-fx-font-size: 14px;"/>
-        </VBox>
-    </top>
+    <content>
+        <VBox fx:id="billContentVBox" spacing="10" style="-fx-background-color: white;" maxWidth="Infinity">
 
-    <center>
-        <VBox fx:id="billContentVBox" spacing="15" VBox.vgrow="ALWAYS">
-            <padding>
-                <Insets top="10" right="20" bottom="10" left="20"/>
+        <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
 
-            <!-- Bill Details -->
-            <GridPane hgap="10" vgap="5">
-                <columnConstraints>
-                    <ColumnConstraints prefWidth="120"/>
-                    <ColumnConstraints hgrow="ALWAYS"/>
-                    <ColumnConstraints prefWidth="100"/>
-                    <ColumnConstraints hgrow="ALWAYS"/>
-                </columnConstraints>
-                <Label text="Bill No.:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <Text fx:id="billNoText" text="" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                <Label text="Bill Date:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                <Text fx:id="billDateText" text="" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+            <!-- Header Section -->
+            <VBox spacing="5">
+                <HBox alignment="CENTER">
+                    <Text text="TAX INVOICE" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+                </HBox>
 
-                <Label text="Details of Receiver:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Text fx:id="receiverNameText" text="" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <Label text="State: AP, State Code: 37" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.columnSpan="2"/>
+                <HBox spacing="20" alignment="TOP_LEFT">
+                    <!-- Left: Company Details -->
+                    <VBox alignment="TOP_LEFT" spacing="5">
+                        <Text text="LEELA SAI AGENCIES" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        <Text text="Shop No.319 Southern Street" style="-fx-font-size: 14px;"/>
+                        <Text text="ELURU" style="-fx-font-size: 14px;"/>
+                        <Text text="GSTIN/UIN: 37DVGPS9830GIZO" style="-fx-font-size: 14px;"/>
+                        <Text text="State Name : Andhra Pradesh, Code : 37" style="-fx-font-size: 14px;"/>
+                        <Text text="Contact : 9290872634" style="-fx-font-size: 14px;"/>
+                    </VBox>
 
-                <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <Text fx:id="receiverAddressText" text="" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.columnSpan="3"/>
-            </GridPane>
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <!-- Right: Invoice/Buyer Details -->
+                    <VBox spacing="5" alignment="TOP_LEFT">
+                        <HBox spacing="5">
+                            <Label text="Invoice No.:"/>
+                            <Text fx:id="billNoText" text=""/>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Dated:"/>
+                            <Text fx:id="billDateText" text=""/>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Buyer (Bill to):"/>
+                            <Text fx:id="receiverNameText" text=""/>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="GSTIN/UIN:"/>
+                            <Text fx:id="receiverGSTText" text=""/>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="Address:"/>
+                            <Text fx:id="receiverAddressText" text=""/>
+                        </HBox>
+                        <HBox spacing="5">
+                            <Label text="State Name:"/>
+                            <Text text="Andhra Pradesh, Code : 37"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </VBox>
 
             <!-- Bill Items Table -->
-            <TableView fx:id="billItemsTable" prefHeight="250">
-                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+            <TableView fx:id="billItemsTable" prefHeight="200"
+                       stylesheets="@../styles/table-style.css">
+
+
+            <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
                 <columns>
-                    <TableColumn text="S.No." prefWidth="50" />
-                    <TableColumn fx:id="descriptionColumn" text="Description of Goods" prefWidth="200"/>
-                    <TableColumn fx:id="qtyColumn" text="Qty." prefWidth="70"/>
-                    <TableColumn fx:id="basicRateColumn" text="Basic Rate" prefWidth="80"/>
-                    <TableColumn fx:id="taxableAmountColumn" text="Taxable Amount" prefWidth="100"/>
-                    <TableColumn text="CGST" prefWidth="150">
+                    <TableColumn text="S.No."/>
+                    <TableColumn fx:id="descriptionColumn" text="Description of Goods"/>
+                    <TableColumn fx:id="hsnColumn" text="HSN/SAC"/>
+                    <TableColumn fx:id="qtyColumn" text="Quantity"/>
+                    <TableColumn fx:id="basicRateColumn" text="Unit Price"/>
+                    <TableColumn fx:id="taxableAmountColumn" text="Value"/>
+                    <TableColumn text="CGST">
                         <columns>
-                            <TableColumn fx:id="cgstPercentageColumn" text="cgst" prefWidth="75"/>
-                            <TableColumn fx:id="cgstValueColumn" text="Value" prefWidth="75"/>
+                            <TableColumn fx:id="cgstPercentageColumn" text="per"/>
+                            <TableColumn fx:id="cgstValueColumn" text="Value"/>
                         </columns>
                     </TableColumn>
-                    <TableColumn text="SGST" prefWidth="150">
+                    <TableColumn text="SGST">
                         <columns>
-                            <TableColumn fx:id="sgstPercentageColumn" text="sgst" prefWidth="75"/>
-                            <TableColumn fx:id="sgstValueColumn" text="Value" prefWidth="75"/>
+                            <TableColumn fx:id="sgstPercentageColumn" text="per"/>
+                            <TableColumn fx:id="sgstValueColumn" text="Value"/>
                         </columns>
                     </TableColumn>
-                    <TableColumn fx:id="itemTotalAmountColumn" text="Total Amount" prefWidth="100"/>
+                    <TableColumn fx:id="itemTotalAmountColumn" text="Total"/>
                 </columns>
             </TableView>
 
-            <!-- Totals and Signature -->
-            <GridPane hgap="10" vgap="5" alignment="BOTTOM_RIGHT">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="ALWAYS"/>
-                    <ColumnConstraints prefWidth="100"/>
-                    <ColumnConstraints prefWidth="100"/>
-                </columnConstraints>
+            <!-- Section: Amount in Words on top -->
+            <VBox spacing="10">
+                <!-- Top: Amount in Words -->
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Amount Chargeable (in words):" style="-fx-font-weight: bold;"/>
+                    <Text fx:id="amountInWordsText" text="" style="-fx-font-weight: bold;"/>
+                </HBox>
 
-                <Label text="Sub Total:" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                <Text fx:id="subTotalText" text="" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                <!-- Bottom: Tax Summary (Left) + Totals (Right) -->
+                <HBox spacing="40" alignment="TOP_LEFT">
 
-                <Label text="Total CGST:" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <Text fx:id="totalCGSTText" text="" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                    <!-- Left: Tax Summary Table -->
+                    <TableView fx:id="taxSummaryTable" prefHeight="120">
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                        <columns>
+                            <TableColumn fx:id="taxHsnColumn" text="HSN/SAC"/>
+                            <TableColumn fx:id="taxableValueColumn" text="Taxable"/>
+                            <TableColumn fx:id="taxCgstColumn" text="CGST"/>
+                            <TableColumn fx:id="taxSgstColumn" text="SGST/UTGST"/>
+                            <TableColumn fx:id="taxTotalColumn" text="Total"/>
+                        </columns>
+                    </TableView>
 
-                <Label text="Total SGST:" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <Text fx:id="totalSGSTText" text="" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                    <!-- Right: Totals Grid -->
+                    <GridPane hgap="10" vgap="5" alignment="TOP_RIGHT">
+                        <columnConstraints>
+                            <ColumnConstraints prefWidth="100"/>
+                            <ColumnConstraints prefWidth="120"/>
+                        </columnConstraints>
 
-                <Label text="Grand Total:" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
-                <Text fx:id="grandTotalText" text="" GridPane.columnIndex="2" GridPane.rowIndex="3" style="-fx-font-weight: bold;"/>
-            </GridPane>
+                        <Label text="Sub Total:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Text fx:id="subTotalText" text="" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-            <HBox alignment="BOTTOM_RIGHT" spacing="20">
-                <Text text="Buyer's Signature"/>
-                <Text text="Signature"/>
+                        <Label text="CGST OUT PUT:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Text fx:id="totalCGSTText" text="" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                        <Label text="SGST OUT PUT:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                        <Text fx:id="totalSGSTText" text="" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                        <Label text="ROUND OFF:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                        <Text fx:id="roundOffText" text="" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                        <Label text="Grand Total:" style="-fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                        <Text fx:id="grandTotalText" style="-fx-font-weight: bold;" text="" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                    </GridPane>
+                </HBox>
+            </VBox>
+
+            <!-- Declaration and Signature -->
+            <VBox spacing="5" alignment="BOTTOM_LEFT">
+                <Label text="Declaration" style="-fx-font-weight: bold;"/>
+                <Label text="We declare that this invoice shows the actual price of the goods described and that all particulars are true and correct."/>
+                <HBox alignment="BOTTOM_RIGHT" spacing="40">
+                    <Text text="Authorised Signatory"/>
+                    <Text text="LEELA SAI AGENCIES" style="-fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Print Button at Bottom -->
+            <HBox alignment="CENTER" spacing="20">
+                <Button fx:id="printButton" text="Print Bill" onAction="#onPrintButtonClicked"
+                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
             </HBox>
         </VBox>
-    </center>
-
-    <bottom>
-        <HBox alignment="CENTER" spacing="20">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            <Button fx:id="printButton" text="Print Bill" onAction="#onPrintButtonClicked"
-                    style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
-        </HBox>
-    </bottom>
-
-</BorderPane>
+    </content>
+</ScrollPane>

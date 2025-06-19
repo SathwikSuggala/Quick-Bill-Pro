@@ -19,6 +19,11 @@ public class ReportItem {
     private final DoubleProperty cgst;
     private final DoubleProperty sgst;
     private final DoubleProperty totalAmount;
+    private DoubleProperty hsn;
+    private DoubleProperty taxableAmount;
+    private DoubleProperty cgstAmount;
+    private DoubleProperty sgstAmount;
+    private DoubleProperty total;
 
     public ReportItem(LocalDate saleDate, int billId, String outletName, String productName,
                       int quantity, double unitPrice, double cgst, double sgst, double totalAmount) {
@@ -31,6 +36,28 @@ public class ReportItem {
         this.cgst = new SimpleDoubleProperty(cgst);
         this.sgst = new SimpleDoubleProperty(sgst);
         this.totalAmount = new SimpleDoubleProperty(totalAmount);
+        this.hsn = new SimpleDoubleProperty(0);
+        this.taxableAmount = new SimpleDoubleProperty(0);
+        this.cgstAmount = new SimpleDoubleProperty(0);
+        this.sgstAmount = new SimpleDoubleProperty(0);
+        this.total = new SimpleDoubleProperty(0);
+    }
+
+    public ReportItem() {
+        this.hsn = new SimpleDoubleProperty(0);
+        this.taxableAmount = new SimpleDoubleProperty(0);
+        this.cgstAmount = new SimpleDoubleProperty(0);
+        this.sgstAmount = new SimpleDoubleProperty(0);
+        this.total = new SimpleDoubleProperty(0);
+        this.saleDate = new SimpleStringProperty("");
+        this.billId = new SimpleIntegerProperty(0);
+        this.outletName = new SimpleStringProperty("");
+        this.productName = new SimpleStringProperty("");
+        this.quantity = new SimpleIntegerProperty(0);
+        this.unitPrice = new SimpleDoubleProperty(0);
+        this.cgst = new SimpleDoubleProperty(0);
+        this.sgst = new SimpleDoubleProperty(0);
+        this.totalAmount = new SimpleDoubleProperty(0);
     }
 
     // Property Getters (for TableView)
@@ -43,6 +70,11 @@ public class ReportItem {
     public DoubleProperty cgstProperty() { return cgst; }
     public DoubleProperty sgstProperty() { return sgst; }
     public DoubleProperty totalAmountProperty() { return totalAmount; }
+    public DoubleProperty hsnProperty() { return hsn; }
+    public DoubleProperty taxableAmountProperty() { return taxableAmount; }
+    public DoubleProperty cgstAmountProperty() { return cgstAmount; }
+    public DoubleProperty sgstAmountProperty() { return sgstAmount; }
+    public DoubleProperty totalProperty() { return total; }
 
     // Regular Getters (if needed elsewhere)
     public String getSaleDate() { return saleDate.get(); }
@@ -69,5 +101,11 @@ public class ReportItem {
     public double getTotal(){
         return getTotalAmount();
     }
+    public double getHsn() { return hsn.get(); }
 
+    public void setHsn(double hsn) { this.hsn.set(hsn); }
+    public void setTaxableAmount(double value) { this.taxableAmount.set(value); }
+    public void setCgstAmount(double value) { this.cgstAmount.set(value); }
+    public void setSgstAmount(double value) { this.sgstAmount.set(value); }
+    public void setTotal(double value) { this.total.set(value); }
 } 

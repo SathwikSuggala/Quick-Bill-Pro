@@ -363,7 +363,9 @@ public class BillingController implements Initializable {
             );
             billForSoftCopy.setBillItems(FXCollections.observableArrayList(bill.getBillItems()));
 
-            controller.setBillData(billForSoftCopy, outletName, outletAddress);
+            // Fetch GSTIN from the selected outlet
+            String outletGSTIN = outletComboBox.getValue() != null ? outletComboBox.getValue().getGstin() : "";
+            controller.setBillData(billForSoftCopy, outletName, outletAddress, outletGSTIN);
 
             Stage stage = new Stage();
             stage.setTitle("Bill Soft Copy");

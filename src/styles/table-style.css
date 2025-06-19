@@ -1,0 +1,30 @@
+/* Apply to all TableView elements */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-column-border: black;
+    -fx-table-cell-border-color: transparent; /* optional, overridden below */
+    -fx-padding: 0;
+}
+
+/* Remove header background and border */
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Row cell style – no horizontal lines */
+.table-row-cell {
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+
+}
+
+/* Show only vertical lines: right border in black */
+.table-cell {
+    -fx-border-color: transparent transparent transparent #666;
+    -fx-border-style: solid;
+    -fx-border-width: 0 0.8px 0 0;
+}
+
+
