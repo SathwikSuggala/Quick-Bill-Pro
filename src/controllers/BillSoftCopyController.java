@@ -90,10 +90,10 @@ public class BillSoftCopyController implements Initializable {
         taxableValueColumn.setCellValueFactory(new PropertyValueFactory<>("taxableAmount"));
         taxCgstColumn.setCellValueFactory(new PropertyValueFactory<>("cgstAmount"));
         taxSgstColumn.setCellValueFactory(new PropertyValueFactory<>("sgstAmount"));
-        taxTotalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
+        taxTotalColumn.setCellValueFactory(new PropertyValueFactory<>("totalTax"));
 
         // Apply two-decimal formatting
-        StringConverter<Double> twoDecimalConverter = new StringConverter<>() {
+        StringConverter<Double> twoDecimalConverter = new StringConverter<Double>() {
             @Override
             public String toString(Double value) {
                 return value == null ? "" : String.format("%.2f", value);
@@ -134,10 +134,10 @@ public class BillSoftCopyController implements Initializable {
         subTotalText.setText(String.format("₹%.2f", subTotal));
         totalCGSTText.setText(String.format("₹%.2f", bill.getTotalCGST()));
         totalSGSTText.setText(String.format("₹%.2f", bill.getTotalSGST()));
-        grandTotalText.setText(String.format("₹%.2f", bill.getTotalAmount()));
 
         double roundedGrandTotal = Math.round(bill.getTotalAmount());
         double roundOff = roundedGrandTotal - bill.getTotalAmount();
+        grandTotalText.setText(String.format("₹%.2f", roundedGrandTotal));
         roundOffText.setText(String.format("%.2f", roundOff));
         amountInWordsText.setText("INR " + numberToWords((long) roundedGrandTotal) + " Only");
 
@@ -151,7 +151,7 @@ public class BillSoftCopyController implements Initializable {
             rep.setTaxableAmount(rep.getTaxableAmount() + item.getTaxableAmount());
             rep.setCgstAmount(rep.getCgstAmount() + item.getCgstAmount());
             rep.setSgstAmount(rep.getSgstAmount() + item.getSgstAmount());
-            rep.setTotal(rep.getTotal() + item.getCgstAmount() + item.getSgstAmount());
+            rep.setTotalTax(rep.getTotalTax() + item.getCgstAmount() + item.getSgstAmount());
             hsnMap.put(hsn, rep);
         }
 
@@ -166,10 +166,16 @@ public class BillSoftCopyController implements Initializable {
         receiverAddressText.setText(billDetails.getOutletAddress());
         totalCGSTText.setText(String.format("₹%.2f", billDetails.getTotalCGST()));
         totalSGSTText.setText(String.format("₹%.2f", billDetails.getTotalSGST()));
-        grandTotalText.setText(String.format("₹%.2f", billDetails.getTotalAmount()));
 
         double subtotal = billDetails.getTotalAmount() - billDetails.getTotalCGST() - billDetails.getTotalSGST();
         subTotalText.setText(String.format("₹%.2f", subtotal));
+
+        double roundedGrandTotal = Math.round(billDetails.getTotalAmount());
+        double roundOff = roundedGrandTotal - billDetails.getTotalAmount();
+
+        grandTotalText.setText(String.format("₹%.2f", roundedGrandTotal));
+        roundOffText.setText(String.format("%.2f", roundOff));
+        amountInWordsText.setText("INR " + numberToWords((long) roundedGrandTotal) + " Only");
     }
 
     @FXML
@@ -208,6 +214,23 @@ public class BillSoftCopyController implements Initializable {
         if (billItemsTable != null && items != null) {
             ObservableList data = FXCollections.observableArrayList(items);
             billItemsTable.setItems(data);
+
+            ObservableList<ReportItem> taxSummary = FXCollections.observableArrayList();
+            Map<Double, ReportItem> hsnMap = new HashMap<>();
+
+            for (ReportItem item : items) {
+                double hsn = item.getHsn();
+                ReportItem rep = hsnMap.getOrDefault(hsn, new ReportItem());
+                rep.setHsn(hsn);
+                rep.setTaxableAmount(rep.getTaxableAmount() + item.getTaxableAmount());
+                rep.setCgstAmount(rep.getCgstAmount() + item.getCgstAmount());
+                rep.setSgstAmount(rep.getSgstAmount() + item.getSgstAmount());
+                rep.setTotalTax(rep.getTotalTax() + item.getCgstAmount() + item.getSgstAmount());
+                hsnMap.put(hsn, rep);
+            }
+
+            taxSummary.addAll(hsnMap.values());
+            taxSummaryTable.setItems(taxSummary);
         }
     }
 

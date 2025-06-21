@@ -21,12 +21,14 @@
                 <Label text="Outlet:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                 <ComboBox fx:id="outletComboBox" prefWidth="200" 
                          promptText="Select Outlet"
+                         editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                 
                 <!-- Product Selection -->
                 <Label text="Product:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                 <ComboBox fx:id="productComboBox" prefWidth="200" 
                          promptText="Select Product"
+                         editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                 
                 <!-- Quantity -->

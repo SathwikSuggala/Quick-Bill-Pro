@@ -2,29 +2,45 @@
 .table-view {
     -fx-background-color: transparent;
     -fx-border-color: black;
-    -fx-column-border: black;
-    -fx-table-cell-border-color: transparent; /* optional, overridden below */
+    -fx-border-width: 0.5;
+}
+
+/* Style for table column headers */
+.table-view .column-header {
+    -fx-border-width: 0 0.5 0.5 0; /* bottom and right border */
+    -fx-border-color: black;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+
+/* Remove horizontal lines from rows */
+.table-row-cell {
+    -fx-border-width: 0;
+    -fx-background-insets: 0; /* Important to remove default lines */
     -fx-padding: 0;
 }
 
-/* Remove header background and border */
-.table-view .column-header-background {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
+/* Add vertical lines to cells */
+.table-view .table-cell {
+    -fx-border-width: 0 0.5 0 0; /* right border */
+    -fx-border-color: black;
+    -fx-padding: 4px;
 }
 
-/* Row cell style – no horizontal lines */
-.table-row-cell {
-    -fx-background-insets: 0;
-    -fx-border-color: transparent;
-
+/* Ensure last column header also has a right border if needed */
+.table-view .column-header:last-visible {
+    -fx-border-width: 0 0 0.5 0; /* No right border for the last header */
 }
 
-/* Show only vertical lines: right border in black */
-.table-cell {
-    -fx-border-color: transparent transparent transparent #666;
-    -fx-border-style: solid;
-    -fx-border-width: 0 0.8px 0 0;
+/* Ensure last cell in a row has no right border */
+.table-view .table-cell:last-visible {
+    -fx-border-width: 0 0 0 0;
 }
 
 

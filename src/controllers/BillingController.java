@@ -19,6 +19,7 @@ import models.BillItem;
 import models.Outlet;
 import models.Product;
 import models.Bill;
+import javafx.collections.transformation.FilteredList;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -55,6 +56,8 @@ public class BillingController implements Initializable {
     private final ProductsDataBase productsDataBase = new ProductsDataBase();
     private boolean outletSelected = false;
     private Product selectedProduct = null;
+    private FilteredList<Product> filteredProducts = new FilteredList<>(FXCollections.observableArrayList(), p -> true);
+    private FilteredList<Outlet> filteredOutlets = new FilteredList<>(FXCollections.observableArrayList(), o -> true);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -65,7 +68,9 @@ public class BillingController implements Initializable {
 
     private void setupComboBoxes() {
         // Setup outlet combo box
-        outletComboBox.setItems(FXCollections.observableArrayList(outletsDataBase.getAllOutlets()));
+        ObservableList<Outlet> allOutlets = FXCollections.observableArrayList(outletsDataBase.getAllOutlets());
+        filteredOutlets = new FilteredList<>(allOutlets, o -> true);
+        outletComboBox.setItems(filteredOutlets);
         outletComboBox.setConverter(new StringConverter<Outlet>() {
             @Override
             public String toString(Outlet outlet) {
@@ -75,6 +80,50 @@ public class BillingController implements Initializable {
             @Override
             public Outlet fromString(String string) {
                 return null;
+            }
+        });
+        // Add filtering logic for search
+        outletComboBox.setEditable(true);
+        outletComboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            final TextField editor = outletComboBox.getEditor();
+            final Outlet selected = outletComboBox.getSelectionModel().getSelectedItem();
+            if (selected == null || !selected.getName().equals(editor.getText())) {
+                if (filteredOutlets != null) {
+                    filteredOutlets.setPredicate(outlet -> {
+                        if (newValue == null || newValue.isEmpty()) return true;
+                        String lowerCaseFilter = newValue.toLowerCase();
+                        return outlet.getName().toLowerCase().contains(lowerCaseFilter);
+                    });
+                    // Workaround for JavaFX bug: clear selection if no match
+                    if (filteredOutlets.isEmpty()) {
+                        outletComboBox.getSelectionModel().clearSelection();
+                        outletComboBox.getEditor().deselect();
+                        outletComboBox.getEditor().setText("");
+                    }
+                }
+            }
+        });
+        // Show dropdown when editor is focused
+        outletComboBox.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                outletComboBox.show();
+            }
+        });
+        // On Enter or selection, match text to Outlet
+        outletComboBox.getEditor().setOnAction(event -> {
+            String typedText = outletComboBox.getEditor().getText();
+            for (Outlet o : filteredOutlets) {
+                if (o.getName().equalsIgnoreCase(typedText)) {
+                    outletComboBox.setValue(o);
+                    return;
+                }
+            }
+            outletComboBox.setValue(null);
+        });
+        // Prevent String from being set as value
+        outletComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !(newVal instanceof Outlet)) {
+                outletComboBox.setValue(null);
             }
         });
 
@@ -159,12 +208,60 @@ public class BillingController implements Initializable {
                 }
             }
         });
+
+        // Add filtering logic for search
+        productComboBox.setEditable(true);
+        productComboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            final TextField editor = productComboBox.getEditor();
+            final Product selected = productComboBox.getSelectionModel().getSelectedItem();
+            if (selected == null || !selected.getName().equals(editor.getText())) {
+                if (filteredProducts != null) {
+                    filteredProducts.setPredicate(product -> {
+                        if (newValue == null || newValue.isEmpty()) return true;
+                        String lowerCaseFilter = newValue.toLowerCase();
+                        return product.getName().toLowerCase().contains(lowerCaseFilter);
+                    });
+                    // Workaround for JavaFX bug: clear selection if no match
+                    if (filteredProducts.isEmpty()) {
+                        productComboBox.getSelectionModel().clearSelection();
+                        productComboBox.getEditor().deselect();
+                        productComboBox.getEditor().setText("");
+                    }
+                }
+            }
+        });
+        // Show dropdown when editor is focused
+        productComboBox.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                productComboBox.show();
+            }
+        });
+        // On Enter or selection, match text to Product
+        productComboBox.getEditor().setOnAction(event -> {
+            String typedText = productComboBox.getEditor().getText();
+            for (Product p : filteredProducts) {
+                if (p.getName().equalsIgnoreCase(typedText)) {
+                    productComboBox.setValue(p);
+                    return;
+                }
+            }
+            productComboBox.setValue(null);
+        });
+
+        // Prevent String from being set as value
+        productComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !(newVal instanceof Product)) {
+                productComboBox.setValue(null);
+            }
+        });
     }
 
     private void loadProductsForOutlet(int outletId) {
-        productComboBox.setItems(FXCollections.observableArrayList(
+        ObservableList<Product> allProducts = FXCollections.observableArrayList(
             productsDataBase.getAllProductsWithAvailableQuantity()
-        ));
+        );
+        filteredProducts = new FilteredList<>(allProducts, p -> true);
+        productComboBox.setItems(filteredProducts);
         productComboBox.setConverter(new StringConverter<Product>() {
             @Override
             public String toString(Product product) {
@@ -174,6 +271,22 @@ public class BillingController implements Initializable {
             @Override
             public Product fromString(String string) {
                 return null;
+            }
+        });
+
+        // Add filtering logic for search
+        productComboBox.setEditable(true);
+        productComboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            final TextField editor = productComboBox.getEditor();
+            final Product selected = productComboBox.getSelectionModel().getSelectedItem();
+            if (selected == null || !selected.getName().equals(editor.getText())) {
+                if (filteredProducts != null) {
+                    filteredProducts.setPredicate(product -> {
+                        if (newValue == null || newValue.isEmpty()) return true;
+                        String lowerCaseFilter = newValue.toLowerCase();
+                        return product.getName().toLowerCase().contains(lowerCaseFilter);
+                    });
+                }
             }
         });
     }

@@ -115,6 +115,7 @@ public class ReportsDataBase {
                        "b.bill_id, " +
                        "o.name AS outlet_name, " +
                        "p.name AS product_name, " +
+                       "p.hsn, " +
                        "bi.quantity, " +
                        "bi.price, " +
                        "bi.CGST, " +
@@ -141,6 +142,7 @@ public class ReportsDataBase {
                     double unitPrice = rs.getDouble("price");
                     double cgst = rs.getDouble("CGST");
                     double sgst = rs.getDouble("SGST");
+                    double hsn = rs.getDouble("hsn");
 
                     double itemSubtotal = quantity * unitPrice;
                     double itemCgstAmount = itemSubtotal * (cgst / 100.0);
@@ -158,10 +160,49 @@ public class ReportsDataBase {
                         sgst,
                         itemTotalAmount
                     );
+                    item.setHsn(hsn);
                     billItems.add(item);
                 }
             }
         }
         return billItems;
+    }
+
+    public List<BillViewItem> getBillsReport(LocalDate startDate, LocalDate endDate) throws SQLException {
+        List<BillViewItem> billsReport = new ArrayList<>();
+        String query = "SELECT " +
+                "b.bill_id, " +
+                "b.bill_date, " +
+                "o.name AS outlet_name, " +
+                "o.address AS outlet_address, " +
+                "b.total_amount, " +
+                "b.total_CGST, " +
+                "b.total_SGST " +
+                "FROM bills b " +
+                "JOIN outlets o ON b.outlet_id = o.outlet_id " +
+                "WHERE b.bill_date BETWEEN ? AND ? " +
+                "ORDER BY b.bill_date DESC, b.bill_id ASC;";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, startDate.toString());
+            stmt.setString(2, endDate.toString());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    billsReport.add(new BillViewItem(
+                            rs.getInt("bill_id"),
+                            LocalDate.parse(rs.getString("bill_date")),
+                            rs.getString("outlet_name"),
+                            rs.getString("outlet_address"),
+                            rs.getDouble("total_amount"),
+                            rs.getDouble("total_CGST"),
+                            rs.getDouble("total_SGST")
+                    ));
+                }
+            }
+        }
+        return billsReport;
     }
 } 

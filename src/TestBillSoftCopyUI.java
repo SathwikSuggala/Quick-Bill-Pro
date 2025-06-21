@@ -50,7 +50,7 @@ public class TestBillSoftCopyUI extends Application {
         bill.setBillItems(FXCollections.observableArrayList(items));
 
         // Set the sample data into the controller
-        controller.setBillData(bill, "A-One Supermarket", "Pune, MH", "27ABCDE1234F2Z5");
+        controller.setBillData(bill, "A-One Supermarket and general stores", "Pune, MH", "27ABCDE1234F2Z5");
 
         // Setup and show the stage
         primaryStage.setTitle("Bill UI Test");

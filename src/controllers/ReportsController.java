@@ -9,9 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import models.ReportItem;
 import models.BillViewItem;
 
 import java.io.IOException;
@@ -24,39 +22,33 @@ public class ReportsController implements Initializable {
 
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
-    @FXML private TableView<ReportItem> salesReportTable;
-    @FXML private TableColumn<ReportItem, String> saleDateColumn;
-    @FXML private TableColumn<ReportItem, Integer> billIdColumn;
-    @FXML private TableColumn<ReportItem, String> outletNameColumn;
-    @FXML private TableColumn<ReportItem, String> productNameColumn;
-    @FXML private TableColumn<ReportItem, Integer> quantityColumn;
-    @FXML private TableColumn<ReportItem, Double> unitPriceColumn;
-    @FXML private TableColumn<ReportItem, Double> cgstColumn;
-    @FXML private TableColumn<ReportItem, Double> sgstColumn;
-    @FXML private TableColumn<ReportItem, Double> totalAmountColumn;
-    @FXML private TableColumn<ReportItem, Void> viewBillColumn;
+    @FXML private TableView<BillViewItem> salesReportTable;
+    @FXML private TableColumn<BillViewItem, String> billDateColumn;
+    @FXML private TableColumn<BillViewItem, Integer> billIdColumn;
+    @FXML private TableColumn<BillViewItem, String> outletNameColumn;
+    @FXML private TableColumn<BillViewItem, Double> totalCGSTColumn;
+    @FXML private TableColumn<BillViewItem, Double> totalSGSTColumn;
+    @FXML private TableColumn<BillViewItem, Double> totalAmountColumn;
+    @FXML private TableColumn<BillViewItem, Void> viewBillColumn;
 
     private final ReportsDataBase reportsDataBase = new ReportsDataBase();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Set up table columns
-        saleDateColumn.setCellValueFactory(new PropertyValueFactory<>("saleDate"));
+        billDateColumn.setCellValueFactory(new PropertyValueFactory<>("billDate"));
         billIdColumn.setCellValueFactory(new PropertyValueFactory<>("billId"));
         outletNameColumn.setCellValueFactory(new PropertyValueFactory<>("outletName"));
-        productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        unitPriceColumn.setCellValueFactory(new PropertyValueFactory<>("unitPrice"));
-        cgstColumn.setCellValueFactory(new PropertyValueFactory<>("cgst"));
-        sgstColumn.setCellValueFactory(new PropertyValueFactory<>("sgst"));
+        totalCGSTColumn.setCellValueFactory(new PropertyValueFactory<>("totalCGST"));
+        totalSGSTColumn.setCellValueFactory(new PropertyValueFactory<>("totalSGST"));
         totalAmountColumn.setCellValueFactory(new PropertyValueFactory<>("totalAmount"));
 
         // Set up view bill button column
-        viewBillColumn.setCellFactory(col -> new TableCell<ReportItem, Void>() {
+        viewBillColumn.setCellFactory(col -> new TableCell<BillViewItem, Void>() {
             private final Button viewButton = new Button("View Bill");
             {
                 viewButton.setOnAction(event -> {
-                    ReportItem item = getTableView().getItems().get(getIndex());
+                    BillViewItem item = getTableView().getItems().get(getIndex());
                     viewBill(item.getBillId());
                 });
             }
@@ -80,8 +72,8 @@ public class ReportsController implements Initializable {
         }
 
         try {
-            ObservableList<ReportItem> reportData = FXCollections.observableArrayList(
-                reportsDataBase.getSalesReport(startDate, endDate)
+            ObservableList<BillViewItem> reportData = FXCollections.observableArrayList(
+                reportsDataBase.getBillsReport(startDate, endDate)
             );
             salesReportTable.setItems(reportData);
         } catch (SQLException e) {
@@ -107,7 +99,7 @@ public class ReportsController implements Initializable {
     private void showBillWindow(BillViewItem billDetails) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/bill_soft_copy.fxml"));
-            BorderPane billRoot = loader.load();
+            ScrollPane billRoot = loader.load();
             
             BillSoftCopyController controller = loader.getController();
             controller.setBillDetails(billDetails);
