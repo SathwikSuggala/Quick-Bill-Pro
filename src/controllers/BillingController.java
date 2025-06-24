@@ -23,6 +23,8 @@ import models.Outlet;
 import models.Product;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import utils.EmailUtil;
+import jakarta.mail.MessagingException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -586,7 +588,52 @@ public class BillingController implements Initializable {
                 );
             }
 
-            // Open bill soft copy page
+            // Open bill soft copy page (hidden, for snapshot)
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/bill_soft_copy.fxml"));
+                Parent root = loader.load();
+                BillSoftCopyController controller = loader.getController();
+                Bill billForSoftCopy = new Bill(
+                    createdBill.getBillId(),
+                    createdBill.getOutletId(),
+                    createdBill.getTotalCGST(),
+                    createdBill.getTotalSGST(),
+                    createdBill.getTotalAmount(),
+                    createdBill.getBillDate(),
+                    createdBill.getPaymentType(),
+                    createdBill.getRemarks()
+                );
+                billForSoftCopy.setBillItems(FXCollections.observableArrayList(createdBill.getBillItems()));
+                String outletGSTIN = outletComboBox.getValue() != null ? outletComboBox.getValue().getGstin() : "";
+                controller.setBillData(billForSoftCopy, outletComboBox.getValue().getName(), outletComboBox.getValue().getAddress(), outletGSTIN);
+                // Export image
+                byte[] imageBytes = controller.getBillImageBytes();
+                // Prepare email
+                String toEmail = outletComboBox.getValue().getEmail();
+                String subject = "Your Purchase Bill from QuickBillPro (Bill No: " + createdBill.getBillId() + ")";
+                String body = "<h2>Thank you for your purchase!</h2>" +
+                        "<p>Dear " + outletComboBox.getValue().getName() + ",</p>" +
+                        "<p>Please find attached the soft copy of your bill.<br>" +
+                        "<b>Bill No:</b> " + createdBill.getBillId() + "<br>" +
+                        "<b>Date:</b> " + createdBill.getBillDate() + "<br>" +
+                        "<b>Total Amount:</b> ₹" + String.format("%.2f", createdBill.getTotalAmount()) + "</p>" +
+                        "<p>We appreciate your business!<br>Leela Sai Agencies, Eluru</p>";
+                if (toEmail != null && !toEmail.isEmpty() && imageBytes != null) {
+                    new Thread(() -> {
+                        try {
+                            EmailUtil.sendEmailWithAttachment(toEmail, subject, body, imageBytes, "Bill_" + createdBill.getBillId() + ".png");
+                        } catch (MessagingException e) {
+                            // Silent fail
+                            e.printStackTrace();
+                        }
+                    }).start();
+                }
+            } catch (Exception e) {
+                // Silent fail for email
+                e.printStackTrace();
+            }
+
+            // Open bill soft copy page for user view
             openBillSoftCopyPage(createdBill, outletComboBox.getValue().getName(), outletComboBox.getValue().getAddress());
 
             clearBill();

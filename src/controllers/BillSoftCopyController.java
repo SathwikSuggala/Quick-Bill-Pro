@@ -24,6 +24,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.io.ByteArrayOutputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 public class BillSoftCopyController implements Initializable {
 
@@ -309,5 +315,52 @@ public class BillSoftCopyController implements Initializable {
             }
         }
         return words.trim();
+    }
+
+    /**
+     * Exports the billContentVBox as a high-resolution PNG image byte array.
+     * @return PNG image bytes of the bill soft copy
+     */
+    public byte[] getBillImageBytes() {
+        try {
+            // Attach to a temporary scene and stage (off-screen)
+            Scene tempScene = new Scene(billContentVBox);
+            Stage tempStage = new Stage();
+            tempStage.setScene(tempScene);
+
+            // Set a preferred size if needed
+            billContentVBox.setPrefWidth(800);
+            billContentVBox.setPrefHeight(700);
+
+            // Force layout
+            billContentVBox.applyCss();
+            billContentVBox.layout();
+
+            SnapshotParameters params = new SnapshotParameters();
+            params.setTransform(javafx.scene.transform.Transform.scale(2.0, 2.0)); // 2x resolution
+
+            double scaledWidth = billContentVBox.getWidth() * 2;
+            double scaledHeight = billContentVBox.getHeight() * 2.4;
+
+            if (scaledWidth <= 0 || scaledHeight <= 0) {
+                scaledWidth = 1600; // fallback
+                scaledHeight = 1680; // fallback
+            }
+
+            WritableImage highResImage = new WritableImage((int) scaledWidth, (int) scaledHeight);
+            WritableImage snapshot = billContentVBox.snapshot(params, highResImage);
+
+            RenderedImage renderedImage = SwingFXUtils.fromFXImage(snapshot, null);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(renderedImage, "png", baos);
+
+            // Clean up
+            tempStage.close();
+
+            return baos.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
