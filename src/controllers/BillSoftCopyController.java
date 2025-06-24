@@ -91,6 +91,13 @@ public class BillSoftCopyController implements Initializable {
         taxCgstColumn.setCellValueFactory(new PropertyValueFactory<>("cgstAmount"));
         taxSgstColumn.setCellValueFactory(new PropertyValueFactory<>("sgstAmount"));
         taxTotalColumn.setCellValueFactory(new PropertyValueFactory<>("totalTax"));
+        taxTotalColumn.setCellFactory(col -> new TableCell<ReportItem, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : String.format("%.2f", item));
+            }
+        });
 
         // Apply two-decimal formatting
         StringConverter<Double> twoDecimalConverter = new StringConverter<Double>() {
@@ -112,13 +119,40 @@ public class BillSoftCopyController implements Initializable {
         sgstPercentageColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
         sgstValueColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
         itemTotalAmountColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
-        hsnColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
 
-        taxHsnColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
-        taxableValueColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
-        taxCgstColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
-        taxSgstColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
-        taxTotalColumn.setCellFactory(TextFieldTableCell.forTableColumn(twoDecimalConverter));
+        // HSN as integer cell factory
+        hsnColumn.setCellFactory(col -> new TableCell<BillItem, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : String.valueOf(item.intValue()));
+            }
+        });
+        taxHsnColumn.setCellFactory(col -> new TableCell<ReportItem, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : String.valueOf(item.intValue()));
+            }
+        });
+        // CGST and SGST in tax summary table: two decimal places
+        taxCgstColumn.setCellFactory(col -> new TableCell<ReportItem, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : String.format("%.2f", item));
+            }
+        });
+        taxSgstColumn.setCellFactory(col -> new TableCell<ReportItem, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : String.format("%.2f", item));
+            }
+        });
+
+        // Increase the height of the tax summary table
+        taxSummaryTable.setPrefHeight(200); // You can adjust this value as needed
     }
 
     public void setBillData(Bill bill, String outletName, String outletAddress, String outletGSTIN) {
@@ -205,7 +239,10 @@ public class BillSoftCopyController implements Initializable {
             if (success) job.endJob();
 
             billItemsTable.setPrefHeight(originalTablePrefHeight);
-            billContentVBox.layout();
+            billItemsTable.applyCss();
+            billItemsTable.layout(); // Ensure internal layout is complete
+            billContentVBox.applyCss();
+            billContentVBox.layout(); // Already exists
         }
     }
 

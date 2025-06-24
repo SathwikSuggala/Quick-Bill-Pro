@@ -80,28 +80,28 @@
 
 
             <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
                 </columnResizePolicy>
                 <columns>
-                    <TableColumn text="S.No."/>
-                    <TableColumn fx:id="descriptionColumn" text="Description of Goods"/>
-                    <TableColumn fx:id="hsnColumn" text="HSN/SAC"/>
-                    <TableColumn fx:id="qtyColumn" text="Quantity"/>
-                    <TableColumn fx:id="basicRateColumn" text="Unit Price"/>
-                    <TableColumn fx:id="taxableAmountColumn" text="Value"/>
+                    <TableColumn text="SN" prefWidth="30"/>
+                    <TableColumn fx:id="descriptionColumn" text="Description of Goods" prefWidth="250"/>
+                    <TableColumn fx:id="hsnColumn" text="HSN/SAC" prefWidth="70"/>
+                    <TableColumn fx:id="qtyColumn" text="Qty" prefWidth="45"/>
+                    <TableColumn fx:id="basicRateColumn" text="Unit Price" prefWidth="60"/>
+                    <TableColumn fx:id="taxableAmountColumn" text="Value" prefWidth="70"/>
                     <TableColumn text="CGST">
                         <columns>
-                            <TableColumn fx:id="cgstPercentageColumn" text="per"/>
-                            <TableColumn fx:id="cgstValueColumn" text="Value"/>
+                            <TableColumn fx:id="cgstPercentageColumn" text="'%'" prefWidth="40"/>
+                            <TableColumn fx:id="cgstValueColumn" text="Value" prefWidth="60"/>
                         </columns>
                     </TableColumn>
                     <TableColumn text="SGST">
                         <columns>
-                            <TableColumn fx:id="sgstPercentageColumn" text="per"/>
-                            <TableColumn fx:id="sgstValueColumn" text="Value"/>
+                            <TableColumn fx:id="sgstPercentageColumn" text="'%'" prefWidth="40"/>
+                            <TableColumn fx:id="sgstValueColumn" text="Value" prefWidth="60"/>
                         </columns>
                     </TableColumn>
-                    <TableColumn fx:id="itemTotalAmountColumn" text="Total"/>
+                    <TableColumn fx:id="itemTotalAmountColumn" text="Total" prefWidth="100"/>
                 </columns>
             </TableView>
 

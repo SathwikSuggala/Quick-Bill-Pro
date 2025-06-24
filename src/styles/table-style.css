@@ -43,4 +43,17 @@
     -fx-border-width: 0 0 0 0;
 }
 
+.table-view .virtual-flow .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+.table-view .virtual-flow .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
 
