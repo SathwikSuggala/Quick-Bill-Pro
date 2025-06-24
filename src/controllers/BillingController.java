@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.util.StringConverter;
@@ -295,6 +296,8 @@ public class BillingController implements Initializable {
     }
 
     private void setupTable() {
+        itemsTableView.setEditable(true);
+
         productNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         hsnColumn.setCellValueFactory(new PropertyValueFactory<>("hsn"));
         quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
@@ -302,6 +305,28 @@ public class BillingController implements Initializable {
         cgstColumn.setCellValueFactory(new PropertyValueFactory<>("cgst"));
         sgstColumn.setCellValueFactory(new PropertyValueFactory<>("sgst"));
         totalColumn.setCellValueFactory(new PropertyValueFactory<>("total"));
+
+        priceColumn.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<Double>() {
+            @Override
+            public String toString(Double object) {
+                return object == null ? "0.00" : String.format("%.2f", object);
+            }
+
+            @Override
+            public Double fromString(String string) {
+                try {
+                    return Double.parseDouble(string);
+                } catch (NumberFormatException e) {
+                    return 0.0;
+                }
+            }
+        }));
+
+        priceColumn.setOnEditCommit(event -> {
+            BillItem item = event.getRowValue();
+            item.setPrice(event.getNewValue());
+            updateTotals();
+        });
         
         actionColumn.setCellFactory(col -> new TableCell<BillItem, Void>() {
             private final Button removeButton = new Button("Remove");
@@ -317,6 +342,18 @@ public class BillingController implements Initializable {
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(empty ? null : removeButton);
+            }
+        });
+
+        hsnColumn.setCellFactory(col -> new TableCell<BillItem, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item.longValue()));
+                }
             }
         });
 
@@ -339,6 +376,11 @@ public class BillingController implements Initializable {
             creditMonthsLabel.setManaged(isCredit);
             creditMonthsComboBox.setVisible(isCredit);
             creditMonthsComboBox.setManaged(isCredit);
+            if (isCredit) {
+                creditMonthsComboBox.setValue(1);
+            } else {
+                creditMonthsComboBox.setValue(null);
+            }
         });
 
         // Update available quantity when product is selected
@@ -377,9 +419,22 @@ public class BillingController implements Initializable {
 
     @FXML
     private void onAddItemClicked() {
+        if (billItems.size() >= 10) {
+            showError("Limit Reached", "You can add a maximum of 10 different items to a single bill.");
+            return;
+        }
+
         if (!validateInputs()) return;
 
         Product selectedProduct = productComboBox.getValue();
+
+        for (BillItem item : billItems) {
+            if (item.getProductId() == selectedProduct.getId()) {
+                showError("Duplicate Product", "This product is already in the bill. You can edit the price or remove it.");
+                return;
+            }
+        }
+
         int quantity = Integer.parseInt(quantityField.getText());
 
         BillItem item = new BillItem(

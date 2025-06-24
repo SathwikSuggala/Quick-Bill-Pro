@@ -134,16 +134,16 @@
                 </graphic>
             </Button>
             
-            <!-- Settings Button -->
-            <Button onAction="#onSettingsClicked" styleClass="nav-button">
+            <!-- Payments Button -->
+            <Button onAction="#onPaymentsClicked" styleClass="nav-button">
                 <graphic>
                     <HBox spacing="15" alignment="CENTER_LEFT">
                         <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
                             <image>
-                                <Image url="@../assets/icons/settings.png"/>
+                                <Image url="@../assets/icons/reports.png"/>
                             </image>
                         </ImageView>
-                        <Text text="Settings" fill="WHITE" style="-fx-font-size: 14px;"/>
+                        <Text text="Payments" fill="WHITE" style="-fx-font-size: 14px;"/>
                     </HBox>
                 </graphic>
             </Button>
@@ -172,7 +172,7 @@
 
     <!-- Main Content Area -->
     <center>
-        <StackPane>
+        <StackPane fx:id="mainContent">
             <Label text="Welcome to QuickBillPro" style="-fx-font-size: 24px;"/>
         </StackPane>
     </center>

@@ -205,4 +205,163 @@ public class ReportsDataBase {
         }
         return billsReport;
     }
+
+    public List<BillViewItem> getBillsReportByOutletAndDate(String outletName, LocalDate startDate, LocalDate endDate) throws SQLException {
+        List<BillViewItem> billsReport = new ArrayList<>();
+        String query = "SELECT " +
+                "b.bill_id, " +
+                "b.bill_date, " +
+                "o.name AS outlet_name, " +
+                "o.address AS outlet_address, " +
+                "b.total_amount, " +
+                "b.total_CGST, " +
+                "b.total_SGST " +
+                "FROM bills b " +
+                "JOIN outlets o ON b.outlet_id = o.outlet_id " +
+                "WHERE o.name = ? AND b.bill_date BETWEEN ? AND ? " +
+                "ORDER BY b.bill_date DESC, b.bill_id ASC;";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, outletName);
+            stmt.setString(2, startDate.toString());
+            stmt.setString(3, endDate.toString());
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    billsReport.add(new BillViewItem(
+                            rs.getInt("bill_id"),
+                            LocalDate.parse(rs.getString("bill_date")),
+                            rs.getString("outlet_name"),
+                            rs.getString("outlet_address"),
+                            rs.getDouble("total_amount"),
+                            rs.getDouble("total_CGST"),
+                            rs.getDouble("total_SGST")
+                    ));
+                }
+            }
+        }
+        return billsReport;
+    }
+
+    public List<BillViewItem> getBillsReportByOutletAndYear(String outletName, int year) throws SQLException {
+        List<BillViewItem> billsReport = new ArrayList<>();
+        String query = "SELECT " +
+                "b.bill_id, " +
+                "b.bill_date, " +
+                "o.name AS outlet_name, " +
+                "o.address AS outlet_address, " +
+                "b.total_amount, " +
+                "b.total_CGST, " +
+                "b.total_SGST " +
+                "FROM bills b " +
+                "JOIN outlets o ON b.outlet_id = o.outlet_id " +
+                "WHERE o.name = ? AND STRFTIME('%Y', b.bill_date) = ? " +
+                "ORDER BY b.bill_date DESC, b.bill_id ASC;";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, outletName);
+            stmt.setString(2, String.valueOf(year));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    billsReport.add(new BillViewItem(
+                            rs.getInt("bill_id"),
+                            LocalDate.parse(rs.getString("bill_date")),
+                            rs.getString("outlet_name"),
+                            rs.getString("outlet_address"),
+                            rs.getDouble("total_amount"),
+                            rs.getDouble("total_CGST"),
+                            rs.getDouble("total_SGST")
+                    ));
+                }
+            }
+        }
+        return billsReport;
+    }
+
+    public List<BillViewItem> getBillsReportByOutletAndYearPaginated(String outletName, int year, int limit, int offset) throws SQLException {
+        List<BillViewItem> billsReport = new ArrayList<>();
+        String query = "SELECT " +
+                "b.bill_id, " +
+                "b.bill_date, " +
+                "o.name AS outlet_name, " +
+                "o.address AS outlet_address, " +
+                "b.total_amount, " +
+                "b.total_CGST, " +
+                "b.total_SGST " +
+                "FROM bills b " +
+                "JOIN outlets o ON b.outlet_id = o.outlet_id " +
+                "WHERE o.name = ? AND STRFTIME('%Y', b.bill_date) = ? " +
+                "ORDER BY b.bill_date DESC, b.bill_id ASC " +
+                "LIMIT ? OFFSET ?;";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, outletName);
+            stmt.setString(2, String.valueOf(year));
+            stmt.setInt(3, limit);
+            stmt.setInt(4, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    billsReport.add(new BillViewItem(
+                            rs.getInt("bill_id"),
+                            LocalDate.parse(rs.getString("bill_date")),
+                            rs.getString("outlet_name"),
+                            rs.getString("outlet_address"),
+                            rs.getDouble("total_amount"),
+                            rs.getDouble("total_CGST"),
+                            rs.getDouble("total_SGST")
+                    ));
+                }
+            }
+        }
+        return billsReport;
+    }
+
+    public List<BillViewItem> getBillsReportPaginated(LocalDate startDate, LocalDate endDate, int limit, int offset) throws SQLException {
+        List<BillViewItem> billsReport = new ArrayList<>();
+        String query = "SELECT " +
+                "b.bill_id, " +
+                "b.bill_date, " +
+                "o.name AS outlet_name, " +
+                "o.address AS outlet_address, " +
+                "b.total_amount, " +
+                "b.total_CGST, " +
+                "b.total_SGST " +
+                "FROM bills b " +
+                "JOIN outlets o ON b.outlet_id = o.outlet_id " +
+                "WHERE b.bill_date BETWEEN ? AND ? " +
+                "ORDER BY b.bill_date DESC, b.bill_id ASC " +
+                "LIMIT ? OFFSET ?;";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, startDate.toString());
+            stmt.setString(2, endDate.toString());
+            stmt.setInt(3, limit);
+            stmt.setInt(4, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    billsReport.add(new BillViewItem(
+                            rs.getInt("bill_id"),
+                            LocalDate.parse(rs.getString("bill_date")),
+                            rs.getString("outlet_name"),
+                            rs.getString("outlet_address"),
+                            rs.getDouble("total_amount"),
+                            rs.getDouble("total_CGST"),
+                            rs.getDouble("total_SGST")
+                    ));
+                }
+            }
+        }
+        return billsReport;
+    }
 } 

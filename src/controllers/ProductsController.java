@@ -64,6 +64,18 @@ public class ProductsController implements Initializable {
         inletColumn.setCellValueFactory(new PropertyValueFactory<>("inletName"));
         hsnColumn.setCellValueFactory(new PropertyValueFactory<>("hsn"));
 
+        hsnColumn.setCellFactory(col -> new TableCell<Product, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item.longValue()));
+                }
+            }
+        });
+
         // Set up action column with purchase and update buttons
         actionColumn.setCellFactory(col -> new TableCell<Product, Void>() {
             private final Button purchaseButton = new Button("Purchase");

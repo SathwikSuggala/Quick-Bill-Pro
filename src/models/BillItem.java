@@ -34,14 +34,18 @@ public class BillItem {
         this.sgst = new SimpleDoubleProperty(sgst);
         this.hsn = new SimpleDoubleProperty(hsn);
 
-        double subtotalVal = quantity * price;
-        double cgstAmtVal = subtotalVal * (cgst / 100.0);
-        double sgstAmtVal = subtotalVal * (sgst / 100.0);
+        // Bind properties for automatic calculation
+        this.taxableAmount = new SimpleDoubleProperty();
+        this.taxableAmount.bind(this.quantity.multiply(this.price));
 
-        this.taxableAmount = new SimpleDoubleProperty(subtotalVal);
-        this.cgstAmount = new SimpleDoubleProperty(cgstAmtVal);
-        this.sgstAmount = new SimpleDoubleProperty(sgstAmtVal);
-        this.total = new SimpleDoubleProperty(subtotalVal + cgstAmtVal + sgstAmtVal);
+        this.cgstAmount = new SimpleDoubleProperty();
+        this.cgstAmount.bind(this.taxableAmount.multiply(this.cgst).divide(100.0));
+
+        this.sgstAmount = new SimpleDoubleProperty();
+        this.sgstAmount.bind(this.taxableAmount.multiply(this.sgst).divide(100.0));
+
+        this.total = new SimpleDoubleProperty();
+        this.total.bind(this.taxableAmount.add(this.cgstAmount).add(this.sgstAmount));
     }
     
     // Getters for properties

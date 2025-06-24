@@ -31,7 +31,7 @@
             <TableColumn fx:id="statusColumn" text="Status" prefWidth="100"/>
             <TableColumn fx:id="creditDateColumn" text="Credit Date" prefWidth="100"/>
             <TableColumn fx:id="dueDateColumn" text="Due Date" prefWidth="100"/>
-            <TableColumn fx:id="actionColumn" text="Action" prefWidth="100"/>
+            <TableColumn fx:id="actionColumn" text="Action" prefWidth="180"/>
         </columns>
     </TableView>
 </VBox> 

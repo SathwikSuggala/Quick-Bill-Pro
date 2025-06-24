@@ -80,7 +80,7 @@
 
 
             <columnResizePolicy>
-                    <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                 </columnResizePolicy>
                 <columns>
                     <TableColumn text="SN" prefWidth="30"/>

@@ -32,7 +32,7 @@ public class UpdateProductDialogController {
         this.product = product;
         nameField.setText(product.getName());
         descriptionField.setText(product.getDescription());
-        hsnField.setText(String.valueOf(product.getHsn()));
+        hsnField.setText(String.valueOf((long) product.getHsn()));
         priceField.setText(String.valueOf(product.getUnitPrice()));
         quantityField.setText(String.valueOf(product.getQuantity()));
         cgstField.setText(String.valueOf(product.getCgst()));

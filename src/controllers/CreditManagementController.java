@@ -18,12 +18,17 @@ import models.OutletCredit;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
+import javafx.scene.layout.HBox;
+import models.BillViewItem;
+import models.ReportItem;
+import DataBase.ReportsDataBase;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.io.IOException;
 
 public class CreditManagementController implements Initializable {
     @FXML private TableView<OutletCredit> creditsTable;
@@ -104,82 +109,46 @@ public class CreditManagementController implements Initializable {
     }
     
     private void setupTable() {
-        if (creditIdColumn != null) {
-            creditIdColumn.setCellValueFactory(new PropertyValueFactory<>("creditId"));
-        }
-        if (outletColumn != null) {
-            outletColumn.setCellValueFactory(new PropertyValueFactory<>("outletName"));
-        }
-        if (amountColumn != null) {
-            amountColumn.setCellValueFactory(new PropertyValueFactory<>("creditAmount"));
-        }
-        if (paidColumn != null) {
-            paidColumn.setCellValueFactory(new PropertyValueFactory<>("paidAmount"));
-        }
-        if (remainingColumn != null) {
-            remainingColumn.setCellValueFactory(new PropertyValueFactory<>("remainingAmount"));
-        }
-        if (statusColumn != null) {
-            statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        }
+        creditIdColumn.setCellValueFactory(new PropertyValueFactory<>("creditId"));
+        outletColumn.setCellValueFactory(new PropertyValueFactory<>("outletName"));
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("creditAmount"));
+        paidColumn.setCellValueFactory(new PropertyValueFactory<>("paidAmount"));
+        remainingColumn.setCellValueFactory(new PropertyValueFactory<>("remainingAmount"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        creditDateColumn.setCellValueFactory(new PropertyValueFactory<>("creditDate"));
+        dueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
         
-        // Format credit date
-        if (creditDateColumn != null) {
-            creditDateColumn.setCellValueFactory(new PropertyValueFactory<>("creditDate"));
-            creditDateColumn.setCellFactory(col -> new TableCell<OutletCredit, String>() {
-                @Override
-                protected void updateItem(String date, boolean empty) {
-                    super.updateItem(date, empty);
-                    if (empty || date == null) {
-                        setText(null);
-                    } else {
-                        setText(date);
-                    }
-                }
-            });
-        }
-        
-        // Format due date
-        if (dueDateColumn != null) {
-            dueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
-            dueDateColumn.setCellFactory(col -> new TableCell<OutletCredit, String>() {
-                @Override
-                protected void updateItem(String date, boolean empty) {
-                    super.updateItem(date, empty);
-                    if (empty || date == null) {
-                        setText(null);
-                    } else {
-                        setText(date);
-                    }
-                }
-            });
-        }
-        
-        // Add action column
-        if (actionColumn != null) {
-            actionColumn.setCellFactory(col -> new TableCell<OutletCredit, Void>() {
-                private final Button addPaymentButton = new Button("Add Payment");
+        actionColumn.setCellFactory(col -> new TableCell<OutletCredit, Void>() {
+            private final Button makePaymentButton = new Button("Pay");
+            private final Button viewBillButton = new Button("View Bill");
+            private final HBox buttons = new HBox(5, makePaymentButton, viewBillButton);
+            
+            {
+                makePaymentButton.setOnAction(event -> {
+                    OutletCredit credit = getTableView().getItems().get(getIndex());
+                    showPaymentDialog(credit);
+                });
                 
-                {
-                    addPaymentButton.setOnAction(event -> {
-                        OutletCredit credit = getTableView().getItems().get(getIndex());
-                        if (credit != null) {
-                            showPaymentDialog(credit);
-                        }
-                    });
-                }
-                
-                @Override
-                protected void updateItem(Void item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
+                viewBillButton.setOnAction(event -> {
+                    OutletCredit credit = getTableView().getItems().get(getIndex());
+                    if (credit.getBillId() > 0) {
+                        viewBill(credit.getBillId());
                     } else {
-                        setGraphic(addPaymentButton);
+                        showError("Info", "This credit is not associated with a bill.");
                     }
+                });
+            }
+            
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(buttons);
                 }
-            });
-        }
+            }
+        });
     }
     
     private void setupListeners() {
@@ -407,5 +376,30 @@ public class CreditManagementController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    
+    private void viewBill(int billId) {
+        try {
+            ReportsDataBase reportsDB = new ReportsDataBase();
+            BillViewItem billDetails = reportsDB.getBillDetails(billId);
+            if (billDetails != null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/bill_soft_copy.fxml"));
+                Parent root = loader.load();
+                
+                BillSoftCopyController controller = loader.getController();
+                controller.setBillDetails(billDetails);
+                controller.setBillItems(reportsDB.getBillItems(billDetails.getBillId()));
+
+                Stage stage = new Stage();
+                stage.setTitle("Bill #" + billDetails.getBillId());
+                stage.setScene(new Scene(root));
+                stage.show();
+            } else {
+                showError("Error", "Could not find bill details.");
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+            showError("Error", "Failed to load bill details: " + e.getMessage());
+        }
     }
 } 
