@@ -17,6 +17,13 @@
             
             <Label text="Reports" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
             
+            <!-- Bill ID Search Row -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Bill ID:"/>
+                <TextField fx:id="billIdSearchField" promptText="Enter Bill ID" prefWidth="100"/>
+                <Button fx:id="billIdSearchButton" text="Search" onAction="#onBillIdSearchClicked"/>
+            </HBox>
+            <!-- Main Filter Row -->
             <HBox spacing="10" alignment="CENTER_LEFT">
                 <Label text="Outlet:"/>
                 <ComboBox fx:id="outletComboBox" promptText="Select Outlet" prefWidth="200"/>

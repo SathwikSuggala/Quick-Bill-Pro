@@ -29,6 +29,8 @@ public class ReportsController implements Initializable {
 
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
+    @FXML private TextField billIdSearchField;
+    @FXML private Button billIdSearchButton;
     @FXML private TableView<BillViewItem> salesReportTable;
     @FXML private TableColumn<BillViewItem, String> billDateColumn;
     @FXML private TableColumn<BillViewItem, Integer> billIdColumn;
@@ -274,6 +276,30 @@ public class ReportsController implements Initializable {
         if (hasNextPage) {
             currentPage++;
             onFilterClicked();
+        }
+    }
+
+    @FXML
+    private void onBillIdSearchClicked() {
+        String billIdText = billIdSearchField.getText().trim();
+        if (billIdText.isEmpty()) {
+            // If empty, revert to normal filter
+            onFilterClicked();
+            return;
+        }
+        try {
+            int billId = Integer.parseInt(billIdText);
+            BillViewItem bill = reportsDataBase.getBillViewItemById(billId);
+            ObservableList<BillViewItem> result = FXCollections.observableArrayList();
+            if (bill != null) {
+                result.add(bill);
+            }
+            salesReportTable.setItems(result);
+            pageInfoLabel.setText("Search Result");
+            prevPageButton.setDisable(true);
+            nextPageButton.setDisable(true);
+        } catch (NumberFormatException e) {
+            showAlert("Invalid Bill ID", "Please enter a valid numeric Bill ID.");
         }
     }
 

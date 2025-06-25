@@ -364,4 +364,13 @@ public class ReportsDataBase {
         }
         return billsReport;
     }
+
+    public BillViewItem getBillViewItemById(int billId) {
+        try {
+            return getBillDetails(billId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 } 
