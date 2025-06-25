@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.UpdateOutletDialogController"
+      spacing="15" style="-fx-padding: 20; -fx-background-color: white;">
+    
+    <Text text="Update Outlet" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    
+    <GridPane hgap="10" vgap="10">
+        <padding>
+            <Insets top="10"/>
+        </padding>
+        
+        <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="0" 
+                 style="-fx-background-radius: 5;" prefWidth="250"/>
+        
+        <Label text="Address:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="addressField" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                 style="-fx-background-radius: 5;" prefWidth="250"/>
+        
+        <Label text="Contact Info:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="contactField" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                 style="-fx-background-radius: 5;" prefWidth="250"/>
+        
+        <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <TextField fx:id="emailField" GridPane.columnIndex="1" GridPane.rowIndex="3"
+                 style="-fx-background-radius: 5;" prefWidth="250"/>
+        
+        <Label text="GSTIN:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <TextField fx:id="gstinField" GridPane.columnIndex="1" GridPane.rowIndex="4"
+                 style="-fx-background-radius: 5;" prefWidth="250"/>
+    </GridPane>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Update" onAction="#onUpdateClicked" 
+                style="-fx-background-color: #2C5364; -fx-text-fill: white; -fx-background-radius: 5;"/>
+        <Button text="Cancel" onAction="#onCancelClicked"
+                style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 5;"/>
+    </HBox>
+</VBox> 

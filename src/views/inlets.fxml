@@ -45,6 +45,7 @@
                 <TableColumn fx:id="nameColumn" text="Name" prefWidth="200"/>
                 <TableColumn fx:id="contactColumn" text="Contact Info" prefWidth="250"/>
                 <TableColumn fx:id="productCountColumn" text="Products" prefWidth="100"/>
+                <TableColumn fx:id="actionColumn" text="Actions" prefWidth="100"/>
             </columns>
         </TableView>
     </VBox>

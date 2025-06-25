@@ -59,6 +59,7 @@
                 <TableColumn fx:id="contactColumn" text="Contact Info" prefWidth="200"/>
                 <TableColumn fx:id="emailColumn" text="Email" prefWidth="200"/>
                 <TableColumn fx:id="gstinColumn" text="GSTIN" prefWidth="150"/>
+                <TableColumn fx:id="actionColumn" text="Actions" prefWidth="100"/>
                 <TableColumn fx:id="billCountColumn" text="Bills" prefWidth="100"/>
             </columns>
         </TableView>

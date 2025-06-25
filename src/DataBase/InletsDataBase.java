@@ -64,4 +64,31 @@ public class InletsDataBase {
             e.printStackTrace();
         }
     }
+
+    // 3. Update an existing inlet
+    public boolean updateInlet(int id, String name, String contactInfo) {
+        String updateQuery = "UPDATE inlets SET name = ?, contact_info = ? WHERE inlet_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(updateQuery)) {
+
+            pstmt.setString(1, name);
+            pstmt.setString(2, contactInfo);
+            pstmt.setInt(3, id);
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Inlet updated successfully.");
+                return true;
+            } else {
+                System.out.println("Failed to update inlet.");
+                return false;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error updating inlet: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

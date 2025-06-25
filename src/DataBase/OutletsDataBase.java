@@ -34,7 +34,7 @@ public class OutletsDataBase {
     }
 
     // 2. Update an existing outlet
-    public static void updateOutlet(int outletId, String newName, String newAddress, String newContactInfo, String newEmail, String newGstin) {
+    public static boolean updateOutlet(int outletId, String newName, String newAddress, String newContactInfo, String newEmail, String newGstin) {
         String sql = "UPDATE outlets SET name = ?, address = ?, contact_info = ?, email = ?, GSTIN = ? WHERE outlet_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -47,12 +47,15 @@ public class OutletsDataBase {
             int rowsUpdated = pstmt.executeUpdate();
             if (rowsUpdated > 0) {
                 System.out.println("Outlet updated successfully.");
+                return true;
             } else {
                 System.out.println("No outlet found with ID: " + outletId);
+                return false;
             }
         } catch (SQLException e) {
             System.err.println("Error updating outlet: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
     }
 

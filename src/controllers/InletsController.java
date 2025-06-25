@@ -4,14 +4,22 @@ import DataBase.InletsDataBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import models.Inlet;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -24,6 +32,7 @@ public class InletsController implements Initializable {
     @FXML private TableColumn<Inlet, String> nameColumn;
     @FXML private TableColumn<Inlet, String> contactColumn;
     @FXML private TableColumn<Inlet, Integer> productCountColumn;
+    @FXML private TableColumn<Inlet, Void> actionColumn;
 
     //private final InletsDataBase inletsDB = new InletsDataBase();
     InletsDataBase inletsDataBase = new InletsDataBase();
@@ -37,11 +46,59 @@ public class InletsController implements Initializable {
         contactColumn.setCellValueFactory(new PropertyValueFactory<>("contactInfo"));
         productCountColumn.setCellValueFactory(new PropertyValueFactory<>("productCount"));
 
+        // Setup action column with update button
+        setupActionColumn();
+
         // Set the table's items
         inletsTable.setItems(inletsList);
 
         // Load initial data
         refreshInlets();
+    }
+
+    private void setupActionColumn() {
+        actionColumn.setCellFactory(col -> new TableCell<Inlet, Void>() {
+            private final Button updateButton = new Button("Update");
+            {
+                updateButton.setOnAction(event -> {
+                    Inlet inlet = getTableView().getItems().get(getIndex());
+                    openUpdateDialog(inlet);
+                });
+                updateButton.setStyle("-fx-background-color: #2C5364; -fx-text-fill: white; -fx-background-radius: 5;");
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : updateButton);
+            }
+        });
+    }
+
+    private void openUpdateDialog(Inlet inlet) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/updateInletDialog.fxml"));
+            Parent root = loader.load();
+
+            UpdateInletDialogController controller = loader.getController();
+            controller.setInlet(inlet);
+
+            Stage dialogStage = new Stage();
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initOwner(inletsTable.getScene().getWindow());
+            dialogStage.setTitle("Update Inlet");
+            dialogStage.setScene(new Scene(root));
+            dialogStage.showAndWait();
+
+            // Refresh the table if update was successful
+            if (controller.isUpdateSuccessful()) {
+                refreshInlets();
+            }
+
+        } catch (IOException e) {
+            showAlert("Error", "Failed to open update dialog: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -72,7 +129,6 @@ public class InletsController implements Initializable {
         // Optional: print once for debugging
         System.out.println(inletsList);
     }
-
 
     private void clearFields() {
         nameField.clear();
