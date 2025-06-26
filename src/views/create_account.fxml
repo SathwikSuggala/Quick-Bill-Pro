@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.CreateAccountController"
+      alignment="CENTER" spacing="20"
+      maxWidth="350"
+      style="-fx-background-color: #ffffff; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0.0, 0.0);">
+    <padding>
+        <Insets top="40" bottom="40" left="30" right="30"/>
+    </padding>
+
+    <Label text="Create Account"
+           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2C5364;"/>
+
+    <TextField fx:id="usernameField" promptText="Username"
+               maxWidth="Infinity"
+               style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #ccc;"/>
+
+    <PasswordField fx:id="passwordField" promptText="Password"
+                   maxWidth="Infinity"
+                   style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #ccc;"/>
+
+    <Button text="Create Account"
+            onAction="#onCreateAccountClicked"
+            maxWidth="Infinity"
+            style="-fx-background-color: #2C5364; -fx-text-fill: white; -fx-background-radius: 10;"/>
+</VBox> 

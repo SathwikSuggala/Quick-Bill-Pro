@@ -1,7 +1,6 @@
 package DataBase;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 public class InventoryDBSetup {
@@ -29,17 +28,9 @@ public class InventoryDBSetup {
                 "CREATE TABLE IF NOT EXISTS users (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "name TEXT," +
-                    "email TEXT" +
+                    "password TEXT" +
                 ");"
             );
-
-            try {
-                stmt.executeUpdate(
-                    "INSERT INTO users(name, email) VALUES ('a', 'a');"
-                );
-            } catch (SQLException e) {
-                // Ignore if already inserted
-            }
 
             // Outlets
             stmt.executeUpdate(

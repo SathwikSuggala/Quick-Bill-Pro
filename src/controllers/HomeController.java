@@ -55,6 +55,11 @@ public class HomeController {
         loadPage("/views/payments_view.fxml");
     }
 
+    @FXML
+    private void onSettingsClicked() {
+        loadPage("/views/settings.fxml");
+    }
+
     public void initialize() {
         loadPage("/views/dashboard.fxml");
     }

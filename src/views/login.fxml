@@ -44,6 +44,13 @@
                     maxWidth="Infinity"
                     style="-fx-background-color: #2C5364; -fx-text-fill: white; -fx-background-radius: 10;"/>
 
+            <!-- Create Account Button -->
+            <Button text="Create Account"
+                    fx:id="createAccountButton"
+                    onAction="#onCreateAccountClicked"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: #203A43; -fx-text-fill: white; -fx-background-radius: 10;"/>
+
             <!-- Hint -->
             <Label text="Don't have an account? Contact admin"
                    style="-fx-font-size: 10px; -fx-text-fill: gray;"/>

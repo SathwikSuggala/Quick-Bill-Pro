@@ -148,6 +148,20 @@
                 </graphic>
             </Button>
             
+            <!-- Settings Button -->
+            <Button onAction="#onSettingsClicked" styleClass="nav-button">
+                <graphic>
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+                            <image>
+                                <Image url="@../assets/icons/settings.png"/>
+                            </image>
+                        </ImageView>
+                        <Text text="Settings" fill="WHITE" style="-fx-font-size: 14px;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+            
             <Region VBox.vgrow="ALWAYS"/>
             
             <!-- User Profile Section -->

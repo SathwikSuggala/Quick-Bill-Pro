@@ -427,4 +427,31 @@ public class BillsDataBase {
             }
         }
     }
+
+    public static List<Bill> getAllBills() throws SQLException {
+        String query = "SELECT * FROM bills ORDER BY bill_date DESC";
+        List<Bill> bills = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String dateString = rs.getString("bill_date");
+                Date billDate = parseDate(dateString);
+                int billId = rs.getInt("bill_id");
+                Bill bill = new Bill(
+                    billId,
+                    rs.getInt("outlet_id"),
+                    rs.getDouble("total_CGST"),
+                    rs.getDouble("total_SGST"),
+                    rs.getDouble("total_amount"),
+                    billDate,
+                    rs.getString("payment_type"),
+                    rs.getString("remarks")
+                );
+                bill.setBillItems(FXCollections.observableArrayList(getBillItems(billId)));
+                bills.add(bill);
+            }
+        }
+        return bills;
+    }
 } 
