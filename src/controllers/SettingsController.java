@@ -13,6 +13,7 @@ import models.BillItem;
 import models.Outlet;
 import DataBase.BillsDataBase;
 import DataBase.OutletsDataBase;
+import DataBase.InventoryDBSetup;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -111,5 +112,54 @@ public class SettingsController {
             e.printStackTrace();
             // Optionally show an alert dialog here
         }
+    }
+
+    private void showAlert(String title, String content, javafx.scene.control.Alert.AlertType type) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void onDeleteLogClicked() {
+        // Path to the log file in the user's home QuickBillPro directory
+        String userHome = System.getProperty("user.home");
+        File logFile = new File(userHome + java.io.File.separator + "QuickBillPro" + java.io.File.separator + "QuickBillPro.log");
+        if (logFile.exists()) {
+            try (java.io.FileWriter fw = new java.io.FileWriter(logFile, false)) {
+                fw.write(""); // Clear the file contents
+                showAlert("Success", "Log file cleared successfully.", javafx.scene.control.Alert.AlertType.INFORMATION);
+            } catch (Exception e) {
+                showAlert("Error", "Failed to clear log file: " + e.getMessage(), javafx.scene.control.Alert.AlertType.ERROR);
+            }
+        } else {
+            showAlert("Info", "Log file does not exist.", javafx.scene.control.Alert.AlertType.INFORMATION);
+        }
+    }
+
+    @FXML
+    private void onResetDataClicked() {
+        javafx.application.Platform.runLater(() -> {
+            javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
+            dialog.setTitle("Confirm Data Reset");
+            dialog.setHeaderText("Are you sure you want to reset all data? This action cannot be undone.\nEnter the passcode to confirm:");
+            dialog.setContentText("Passcode:");
+            java.util.Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                String passcode = result.get();
+                if ("9290872634".equals(passcode)) {
+                    try {
+                        DataBase.InventoryDBSetup.resetAllDataExceptCore();
+                        showAlert("Success", "All data (except inlets, outlets, products, stock, users) has been reset.", javafx.scene.control.Alert.AlertType.INFORMATION);
+                    } catch (Exception e) {
+                        showAlert("Error", "Failed to reset data: " + e.getMessage(), javafx.scene.control.Alert.AlertType.ERROR);
+                    }
+                } else {
+                    showAlert("Incorrect Passcode", "The passcode you entered is incorrect. Data reset cancelled.", javafx.scene.control.Alert.AlertType.ERROR);
+                }
+            } // else: user cancelled, do nothing
+        });
     }
 } 

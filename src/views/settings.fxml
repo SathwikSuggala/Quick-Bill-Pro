@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.SettingsController" prefWidth="600" prefHeight="400" fx:id="rootPane">
     <children>
-        <Label text="Settings Page" layoutX="250" layoutY="180" />
-        <Button text="Export Bills to Excel" layoutX="200" layoutY="250" fx:id="exportExcelButton" onAction="#onExportExcelClicked" />
+        <StackPane prefWidth="600" prefHeight="400">
+            <VBox alignment="CENTER" spacing="20" StackPane.alignment="CENTER" style="-fx-background-color: #f7fafd; -fx-padding: 40; -fx-background-radius: 16; -fx-effect: dropshadow(gaussian, #b0c4de, 20, 0.2, 0, 4);" fx:id="settingsCard">
+                <ImageView fitWidth="64" fitHeight="64" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(gaussian, #b0c4de, 8, 0.2, 0, 2);">
+                    <image>
+                        <Image url="@../assets/icons/settings.png" />
+                    </image>
+                </ImageView>
+                <Label text="Settings" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2C5364;" />
+                <Label text="Manage your preferences and export your data." style="-fx-font-size: 14px; -fx-text-fill: #607d8b;" />
+                <Button text="Export Bills to Excel" fx:id="exportExcelButton" onAction="#onExportExcelClicked" style="-fx-background-color: linear-gradient(to right, #36d1c4, #2C5364); -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 8; -fx-padding: 10 30; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, #b0c4de, 4, 0.2, 0, 2);" />
+                <Button text="Delete Log File" fx:id="deleteLogButton" onAction="#onDeleteLogClicked" style="-fx-background-color: linear-gradient(to right, #36d1c4, #2C5364); -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 8; -fx-padding: 10 30; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, #b0c4de, 4, 0.2, 0, 2);" />
+                <Button text="Reset All Data" fx:id="resetDataButton" onAction="#onResetDataClicked" style="-fx-background-color: linear-gradient(to right, #36d1c4, #2C5364); -fx-text-fill: white; -fx-font-size: 16px; -fx-background-radius: 8; -fx-padding: 10 30; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, #b0c4de, 4, 0.2, 0, 2);" />
+            </VBox>
+        </StackPane>
     </children>
 </AnchorPane> 

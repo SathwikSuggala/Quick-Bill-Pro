@@ -25,6 +25,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import utils.EmailUtil;
 import jakarta.mail.MessagingException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +35,7 @@ import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class BillingController implements Initializable {
+    private static final Logger logger = LogManager.getLogger(BillingController.class);
     @FXML private ComboBox<Outlet> outletComboBox;
     @FXML private ComboBox<Product> productComboBox;
     @FXML private TextField quantityField;
@@ -74,7 +77,7 @@ public class BillingController implements Initializable {
     private void setupComboBoxes() {
         // Load all outlets
         allOutlets = FXCollections.observableArrayList(outletsDataBase.getAllOutlets());
-        System.out.println("Loaded " + allOutlets.size() + " outlets");
+        logger.info("Loaded " + allOutlets.size() + " outlets");
         
         // Setup outlet combo box with custom search popup
         setupOutletSearchPopup();
@@ -413,7 +416,7 @@ public class BillingController implements Initializable {
     private void loadProductsForOutlet(int outletId) {
         // Load all products
         allProducts = FXCollections.observableArrayList(productsDataBase.getAllProductsWithAvailableQuantity());
-        System.out.println("Loaded " + allProducts.size() + " products");
+        logger.info("Loaded " + allProducts.size() + " products");
         
         // Setup product combo box with custom search popup
         setupProductSearchPopup();
@@ -623,8 +626,8 @@ public class BillingController implements Initializable {
                         try {
                             EmailUtil.sendEmailWithAttachment(toEmail, subject, body, imageBytes, "Bill_" + createdBill.getBillId() + ".png");
                         } catch (MessagingException e) {
-                            // Silent fail
-                            e.printStackTrace();
+                            logger.error("Failed to send email: " + e.getMessage(), e);
+                            javafx.application.Platform.runLater(() -> showError("Email Error", e.getMessage()));
                         }
                     }).start();
                 }

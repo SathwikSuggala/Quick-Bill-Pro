@@ -18,12 +18,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.Inlet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class InletsController implements Initializable {
+
+    private static final Logger logger = LogManager.getLogger(InletsController.class);
 
     @FXML private TextField nameField;
     @FXML private TextField contactField;
@@ -127,7 +131,7 @@ public class InletsController implements Initializable {
         inletsList.addAll(inletsDataBase.fetchAllInletsWithProductCount());
 
         // Optional: print once for debugging
-        System.out.println(inletsList);
+        logger.info("Inlets List: {}", inletsList);
     }
 
     private void clearFields() {

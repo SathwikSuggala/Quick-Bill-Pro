@@ -7,8 +7,11 @@ import models.Purchase;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PurchasesDataBase {
+    private static final Logger logger = LogManager.getLogger(PurchasesDataBase.class);
 
     // 1. Fetch all unique purchase dates
     public ObservableList<LocalDate> fetchAllPurchaseDates() {
@@ -27,8 +30,7 @@ public class PurchasesDataBase {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error fetching purchase dates: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error fetching purchase dates: " + e.getMessage(), e);
         }
 
         return datesList;
@@ -72,8 +74,7 @@ public class PurchasesDataBase {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error fetching purchases by date: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error fetching purchases by date: " + e.getMessage(), e);
         }
 
         return purchasesList;

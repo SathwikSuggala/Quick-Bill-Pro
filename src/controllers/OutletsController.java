@@ -18,12 +18,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.Outlet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class OutletsController implements Initializable {
+
+    private static final Logger logger = LogManager.getLogger(OutletsController.class);
 
     @FXML private TextField nameField;
     @FXML private TextField addressField;
@@ -105,7 +109,7 @@ public class OutletsController implements Initializable {
 
         } catch (IOException e) {
             showAlert("Error", "Failed to open update dialog: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
+            logger.error("Failed to open update dialog: " + e.getMessage(), e);
         }
     }
 

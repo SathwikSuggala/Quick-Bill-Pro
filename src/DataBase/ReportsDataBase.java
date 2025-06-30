@@ -10,8 +10,11 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ReportsDataBase {
+    private static final Logger logger = LogManager.getLogger(ReportsDataBase.class);
 
     public List<ReportItem> getSalesReport(LocalDate startDate, LocalDate endDate) throws SQLException {
         List<ReportItem> salesReport = new ArrayList<>();
@@ -69,6 +72,8 @@ public class ReportsDataBase {
                     salesReport.add(item);
                 }
             }
+        } catch (SQLException e) {
+            logger.error("Error fetching sales report: " + e.getMessage(), e);
         }
         return salesReport;
     }

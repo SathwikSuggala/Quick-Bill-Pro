@@ -9,6 +9,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import models.DashboardStats;
 import utils.ChartGenerator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -21,6 +23,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 public class DashboardController implements Initializable {
+    private static final Logger logger = LogManager.getLogger(DashboardController.class);
     @FXML private ComboBox<String> periodComboBox;
     @FXML private Label totalSalesLabel;
     @FXML private Label totalPurchasesLabel;
@@ -38,13 +41,13 @@ public class DashboardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("Initializing DashboardController...");
+        logger.info("Initializing DashboardController...");
         setupPeriodComboBox();
         Platform.runLater(this::loadDashboardData);
     }
 
     private void setupPeriodComboBox() {
-        System.out.println("Setting up period combo box...");
+        logger.info("Setting up period combo box...");
         periodComboBox.getItems().addAll("All Time", "This Month");
         periodComboBox.setValue("All Time");
         
@@ -52,7 +55,7 @@ public class DashboardController implements Initializable {
     }
 
     private void loadDashboardData() {
-        System.out.println("Loading dashboard data...");
+        logger.info("Loading dashboard data...");
         try {
             DashboardStats stats;
             if ("This Month".equals(periodComboBox.getValue())) {
@@ -69,83 +72,83 @@ public class DashboardController implements Initializable {
     }
 
     private void updateLabels(DashboardStats stats) {
-        System.out.println("Updating labels with stats...");
+        logger.info("Updating labels with stats...");
         
         if (totalSalesLabel != null) {
             totalSalesLabel.setText(String.format("₹%.2f", stats.getTotalSales()));
-            System.out.println("Updated totalSalesLabel: " + totalSalesLabel.getText());
+            logger.info("Updated totalSalesLabel: " + totalSalesLabel.getText());
         } else {
-            System.out.println("totalSalesLabel is null");
+            logger.info("totalSalesLabel is null");
         }
         
         if (totalPurchasesLabel != null) {
             totalPurchasesLabel.setText(String.format("₹%.2f", stats.getTotalPurchases()));
-            System.out.println("Updated totalPurchasesLabel: " + totalPurchasesLabel.getText());
+            logger.info("Updated totalPurchasesLabel: " + totalPurchasesLabel.getText());
         } else {
-            System.out.println("totalPurchasesLabel is null");
+            logger.info("totalPurchasesLabel is null");
         }
         
         if (totalProfitLabel != null) {
             totalProfitLabel.setText(String.format("₹%.2f", stats.getTotalProfit()));
-            System.out.println("Updated totalProfitLabel: " + totalProfitLabel.getText());
+            logger.info("Updated totalProfitLabel: " + totalProfitLabel.getText());
         } else {
-            System.out.println("totalProfitLabel is null");
+            logger.info("totalProfitLabel is null");
         }
         
         if (totalCreditsLabel != null) {
             totalCreditsLabel.setText(String.format("₹%.2f", stats.getTotalCredits()));
-            System.out.println("Updated totalCreditsLabel: " + totalCreditsLabel.getText());
+            logger.info("Updated totalCreditsLabel: " + totalCreditsLabel.getText());
         } else {
-            System.out.println("totalCreditsLabel is null");
+            logger.info("totalCreditsLabel is null");
         }
         
         if (totalPaymentsLabel != null) {
             totalPaymentsLabel.setText(String.format("₹%.2f", stats.getTotalPayments()));
-            System.out.println("Updated totalPaymentsLabel: " + totalPaymentsLabel.getText());
+            logger.info("Updated totalPaymentsLabel: " + totalPaymentsLabel.getText());
         } else {
-            System.out.println("totalPaymentsLabel is null");
+            logger.info("totalPaymentsLabel is null");
         }
         
         if (pendingCreditsLabel != null) {
             pendingCreditsLabel.setText(String.valueOf(stats.getPendingCredits()));
-            System.out.println("Updated pendingCreditsLabel: " + pendingCreditsLabel.getText());
+            logger.info("Updated pendingCreditsLabel: " + pendingCreditsLabel.getText());
         } else {
-            System.out.println("pendingCreditsLabel is null");
+            logger.info("pendingCreditsLabel is null");
         }
         
         if (totalCGSTLabel != null) {
             totalCGSTLabel.setText(String.format("₹%.2f", stats.getTotalCGST()));
-            System.out.println("Updated totalCGSTLabel: " + totalCGSTLabel.getText());
+            logger.info("Updated totalCGSTLabel: " + totalCGSTLabel.getText());
         } else {
-            System.out.println("totalCGSTLabel is null");
+            logger.info("totalCGSTLabel is null");
         }
         
         if (totalSGSTLabel != null) {
             totalSGSTLabel.setText(String.format("₹%.2f", stats.getTotalSGST()));
-            System.out.println("Updated totalSGSTLabel: " + totalSGSTLabel.getText());
+            logger.info("Updated totalSGSTLabel: " + totalSGSTLabel.getText());
         } else {
-            System.out.println("totalSGSTLabel is null");
+            logger.info("totalSGSTLabel is null");
         }
         
         if (totalProductsLabel != null) {
             totalProductsLabel.setText(String.valueOf(stats.getTotalProducts()));
-            System.out.println("Updated totalProductsLabel: " + totalProductsLabel.getText());
+            logger.info("Updated totalProductsLabel: " + totalProductsLabel.getText());
         } else {
-            System.out.println("totalProductsLabel is null");
+            logger.info("totalProductsLabel is null");
         }
         
         if (lowStockProductsLabel != null) {
             lowStockProductsLabel.setText(String.valueOf(stats.getLowStockProducts()));
-            System.out.println("Updated lowStockProductsLabel: " + lowStockProductsLabel.getText());
+            logger.info("Updated lowStockProductsLabel: " + lowStockProductsLabel.getText());
         } else {
-            System.out.println("lowStockProductsLabel is null");
+            logger.info("lowStockProductsLabel is null");
         }
         
         if (totalOutletsLabel != null) {
             totalOutletsLabel.setText(String.valueOf(stats.getTotalOutlets()));
-            System.out.println("Updated totalOutletsLabel: " + totalOutletsLabel.getText());
+            logger.info("Updated totalOutletsLabel: " + totalOutletsLabel.getText());
         } else {
-            System.out.println("totalOutletsLabel is null");
+            logger.info("totalOutletsLabel is null");
         }
     }
 

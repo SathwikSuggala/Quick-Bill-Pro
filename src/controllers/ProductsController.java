@@ -15,12 +15,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.Inlet;
 import models.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ProductsController implements Initializable {
+
+    private static final Logger logger = LogManager.getLogger(ProductsController.class);
 
     @FXML
     private TextField searchField;
@@ -121,7 +125,7 @@ public class ProductsController implements Initializable {
             stage.showAndWait();
         } catch (IOException e) {
             showAlert("Error", "Could not open purchase history dialog", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            logger.error("Error opening purchase history dialog", e);
         }
     }
 
@@ -142,7 +146,7 @@ public class ProductsController implements Initializable {
             stage.showAndWait();
         } catch (IOException e) {
             showAlert("Error", "Could not open add product dialog", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            logger.error("Error opening add product dialog", e);
         }
     }
 
@@ -163,7 +167,7 @@ public class ProductsController implements Initializable {
             stage.showAndWait();
         } catch (IOException e) {
             showAlert("Error", "Could not open update dialog", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            logger.error("Error opening update dialog", e);
         }
     }
 
@@ -184,7 +188,7 @@ public class ProductsController implements Initializable {
             stage.showAndWait();
         } catch (IOException e) {
             showAlert("Error", "Could not open add purchase dialog", Alert.AlertType.ERROR);
-            e.printStackTrace();
+            logger.error("Error opening add purchase dialog", e);
         }
     }
 

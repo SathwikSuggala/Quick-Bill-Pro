@@ -3,10 +3,13 @@ package DataBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.Inlet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
 public class InletsDataBase {
+    private static final Logger logger = LogManager.getLogger(InletsDataBase.class);
 
     // 1. Fetch all inlets with product count (based on purchases)
     public ObservableList<Inlet> fetchAllInletsWithProductCount() {
@@ -35,8 +38,7 @@ public class InletsDataBase {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error fetching inlets: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error fetching inlets: " + e.getMessage(), e);
         }
 
         return inletsList;
@@ -54,14 +56,13 @@ public class InletsDataBase {
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("New inlet added successfully.");
+                logger.info("New inlet added successfully.");
             } else {
-                System.out.println("Failed to add new inlet.");
+                logger.info("Failed to add new inlet.");
             }
 
         } catch (SQLException e) {
-            System.err.println("Error adding inlet: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error adding inlet: " + e.getMessage(), e);
         }
     }
 
@@ -78,16 +79,15 @@ public class InletsDataBase {
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
-                System.out.println("Inlet updated successfully.");
+                logger.info("Inlet updated successfully.");
                 return true;
             } else {
-                System.out.println("Failed to update inlet.");
+                logger.info("Failed to update inlet.");
                 return false;
             }
 
         } catch (SQLException e) {
-            System.err.println("Error updating inlet: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error updating inlet: " + e.getMessage(), e);
             return false;
         }
     }

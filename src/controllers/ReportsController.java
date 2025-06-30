@@ -24,8 +24,12 @@ import javafx.application.Platform;
 import java.util.Arrays;
 import java.time.Month;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ReportsController implements Initializable {
+
+    private static final Logger logger = LogManager.getLogger(ReportsController.class);
 
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
@@ -246,7 +250,7 @@ public class ReportsController implements Initializable {
             salesReportTable.setItems(reportData);
             updatePageInfoLabel();
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to generate report: " + e.getMessage());
             showAlert("Error", "Failed to generate report: " + e.getMessage());
         }
     }
@@ -312,7 +316,7 @@ public class ReportsController implements Initializable {
                 showAlert("Error", "Could not find bill details.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to load bill details: " + e.getMessage());
             showAlert("Error", "Failed to load bill details: " + e.getMessage());
         }
     }
@@ -331,7 +335,7 @@ public class ReportsController implements Initializable {
             stage.setScene(new Scene(billRoot));
             stage.show();
         } catch (IOException | SQLException e) {
-            e.printStackTrace();
+            logger.error("Failed to open bill view: " + e.getMessage());
             showAlert("Error", "Failed to open bill view: " + e.getMessage());
         }
     }

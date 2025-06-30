@@ -96,16 +96,10 @@ public class PaymentDialogController {
             dialogStage.close();
             
         } catch (NumberFormatException e) {
-            System.err.println("Error parsing payment amount: " + e.getMessage());
-            e.printStackTrace();
             showError("Error", "Invalid payment amount");
         } catch (SQLException e) {
-            System.err.println("Error adding payment to database: " + e.getMessage());
-            e.printStackTrace();
             showError("Error", "Failed to add payment: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Unexpected error in onAddPayment: " + e.getMessage());
-            e.printStackTrace();
             showError("Error", "An unexpected error occurred: " + e.getMessage());
         }
     }
@@ -116,7 +110,6 @@ public class PaymentDialogController {
     }
     
     private void showError(String title, String content) {
-        System.err.println("Error - " + title + ": " + content);
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);

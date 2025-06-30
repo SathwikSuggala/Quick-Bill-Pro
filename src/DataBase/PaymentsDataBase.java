@@ -1,6 +1,8 @@
 package DataBase;
 
 import models.CreditPaymentView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentsDataBase {
+    private static final Logger logger = LogManager.getLogger(PaymentsDataBase.class);
 
     public List<CreditPaymentView> getCreditPayments(String outletName, LocalDate startDate, LocalDate endDate, int limit, int offset) throws SQLException {
         List<CreditPaymentView> payments = new ArrayList<>();
@@ -61,6 +64,8 @@ public class PaymentsDataBase {
                     ));
                 }
             }
+        } catch (SQLException e) {
+            logger.error("Error fetching purchase dates: " + e.getMessage(), e);
         }
         return payments;
     }

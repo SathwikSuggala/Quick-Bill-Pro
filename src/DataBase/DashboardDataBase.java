@@ -3,47 +3,50 @@ package DataBase;
 import models.DashboardStats;
 import java.sql.*;
 import java.time.LocalDate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DashboardDataBase {
+    private static final Logger logger = LogManager.getLogger(DashboardDataBase.class);
     
     public DashboardStats getDashboardStats() throws SQLException {
-        System.out.println("Fetching dashboard stats...");
+        logger.info("Fetching dashboard stats...");
         try (Connection conn = DBConnection.getConnection()) {
             double totalSales = getTotalSales(conn);
-            System.out.println("Total Sales: " + totalSales);
+            logger.info("Total Sales: " + totalSales);
             
             double totalPurchases = getTotalPurchases(conn);
-            System.out.println("Total Purchases: " + totalPurchases);
+            logger.info("Total Purchases: " + totalPurchases);
             
             double totalCredits = getTotalCredits(conn);
-            System.out.println("Total Credits: " + totalCredits);
+            logger.info("Total Credits: " + totalCredits);
             
             double totalPayments = getTotalPayments(conn);
-            System.out.println("Total Payments: " + totalPayments);
+            logger.info("Total Payments: " + totalPayments);
             
             int totalProducts = getTotalProducts(conn);
-            System.out.println("Total Products: " + totalProducts);
+            logger.info("Total Products: " + totalProducts);
             
             int totalOutlets = getTotalOutlets(conn);
-            System.out.println("Total Outlets: " + totalOutlets);
+            logger.info("Total Outlets: " + totalOutlets);
             
             int totalInlets = getTotalInlets(conn);
-            System.out.println("Total Inlets: " + totalInlets);
+            logger.info("Total Inlets: " + totalInlets);
             
             double totalCGST = getTotalCGST(conn);
-            System.out.println("Total CGST: " + totalCGST);
+            logger.info("Total CGST: " + totalCGST);
             
             double totalSGST = getTotalSGST(conn);
-            System.out.println("Total SGST: " + totalSGST);
+            logger.info("Total SGST: " + totalSGST);
             
             int lowStockProducts = getLowStockProducts(conn);
-            System.out.println("Low Stock Products: " + lowStockProducts);
+            logger.info("Low Stock Products: " + lowStockProducts);
             
             int pendingCredits = getPendingCredits(conn);
-            System.out.println("Pending Credits: " + pendingCredits);
+            logger.info("Pending Credits: " + pendingCredits);
             
             double totalProfit = calculateProfit(totalSales, totalPurchases);
-            System.out.println("Total Profit: " + totalProfit);
+            logger.info("Total Profit: " + totalProfit);
 
             return new DashboardStats(
                 totalSales, totalPurchases, totalCredits, totalPayments,
@@ -58,8 +61,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             double result = rs.next() ? rs.getDouble(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -69,8 +72,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             double result = rs.next() ? rs.getDouble(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -80,8 +83,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             double result = rs.next() ? rs.getDouble(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -91,8 +94,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             double result = rs.next() ? rs.getDouble(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -102,8 +105,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             int result = rs.next() ? rs.getInt(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -113,8 +116,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             int result = rs.next() ? rs.getInt(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -124,8 +127,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             int result = rs.next() ? rs.getInt(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -135,8 +138,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             double result = rs.next() ? rs.getDouble(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -146,8 +149,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             double result = rs.next() ? rs.getDouble(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -157,8 +160,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             int result = rs.next() ? rs.getInt(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }
@@ -168,8 +171,8 @@ public class DashboardDataBase {
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             int result = rs.next() ? rs.getInt(1) : 0;
-            System.out.println("Executing query: " + query);
-            System.out.println("Result: " + result);
+            logger.debug("Executing query: " + query);
+            logger.debug("Result: " + result);
             return result;
         }
     }

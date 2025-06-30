@@ -22,6 +22,8 @@ import javafx.scene.layout.HBox;
 import models.BillViewItem;
 import models.ReportItem;
 import DataBase.ReportsDataBase;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 import java.io.IOException;
 
 public class CreditManagementController implements Initializable {
+    private static final Logger logger = LogManager.getLogger(CreditManagementController.class);
     @FXML private TableView<OutletCredit> creditsTable;
     @FXML private TableColumn<OutletCredit, Integer> creditIdColumn;
     @FXML private TableColumn<OutletCredit, String> outletColumn;
@@ -187,17 +190,17 @@ public class CreditManagementController implements Initializable {
     }
     
     private void loadData() throws SQLException {
-        System.out.println("Starting to load data...");
+        logger.info("Starting to load data...");
         
         String selectedOutlet = outletComboBox != null ? outletComboBox.getValue() : "All Outlets";
         String selectedStatus = statusComboBox != null ? statusComboBox.getValue() : "All";
         
-        System.out.println("Selected outlet: " + selectedOutlet);
-        System.out.println("Selected status: " + selectedStatus);
+        logger.info("Selected outlet: " + selectedOutlet);
+        logger.info("Selected status: " + selectedStatus);
         
         List<OutletCredit> credits;
         if (selectedOutlet != null && !selectedOutlet.equals("All Outlets")) {
-            System.out.println("Loading credits for outlet: " + selectedOutlet);
+            logger.info("Loading credits for outlet: " + selectedOutlet);
             List<Outlet> outlets = outletsDataBase.getAllOutlets();
             Outlet outlet = outlets.stream()
                 .filter(o -> o.getName().equals(selectedOutlet))
@@ -205,26 +208,26 @@ public class CreditManagementController implements Initializable {
                 .orElse(null);
                 
             if (outlet != null) {
-                System.out.println("Loading credits for outlet ID: " + outlet.getId());
+                logger.info("Loading credits for outlet ID: " + outlet.getId());
                 credits = billsDataBase.getCreditsByOutlet(outlet.getId());
             } else {
-                System.out.println("Outlet not found, loading all credits");
+                logger.info("Outlet not found, loading all credits");
                 credits = billsDataBase.getAllCredits();
             }
         } else {
-            System.out.println("Loading all credits");
+            logger.info("Loading all credits");
             credits = billsDataBase.getAllCredits();
         }
         
-        System.out.println("Number of credits loaded: " + credits.size());
+        logger.info("Number of credits loaded: " + credits.size());
         
         // Filter by status if needed
         if (selectedStatus != null && !selectedStatus.equals("All")) {
-            System.out.println("Filtering by status: " + selectedStatus);
+            logger.info("Filtering by status: " + selectedStatus);
             credits = credits.stream()
                 .filter(credit -> credit.getStatus().equals(selectedStatus.toUpperCase()))
                 .collect(Collectors.toList());
-            System.out.println("Number of credits after filtering: " + credits.size());
+            logger.info("Number of credits after filtering: " + credits.size());
         }
         
         // Apply search filter if any
@@ -241,7 +244,7 @@ public class CreditManagementController implements Initializable {
             creditsTable.getItems().setAll(credits);
         }
         
-        System.out.println("Data loaded successfully");
+        logger.info("Data loaded successfully");
     }
     
     private void showPaymentDialog(OutletCredit credit) {

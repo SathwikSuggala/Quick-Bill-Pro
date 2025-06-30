@@ -3,6 +3,8 @@ package DataBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.Outlet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class OutletsDataBase {
+    private static final Logger logger = LogManager.getLogger(OutletsDataBase.class);
 
     // 1. Create a new outlet
     public static void createNewOutlet(String name, String address, String contactInfo, String email, String gstin) {
@@ -23,13 +26,12 @@ public class OutletsDataBase {
             pstmt.setString(5, gstin);
             int rowsInserted = pstmt.executeUpdate();
             if (rowsInserted > 0) {
-                System.out.println("New outlet created successfully.");
+                logger.info("New outlet created successfully.");
             } else {
-                System.out.println("Failed to create outlet.");
+                logger.info("Failed to create outlet.");
             }
         } catch (SQLException e) {
-            System.err.println("Error creating outlet: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error creating outlet: " + e.getMessage(), e);
         }
     }
 
@@ -46,15 +48,14 @@ public class OutletsDataBase {
             pstmt.setInt(6, outletId);
             int rowsUpdated = pstmt.executeUpdate();
             if (rowsUpdated > 0) {
-                System.out.println("Outlet updated successfully.");
+                logger.info("Outlet updated successfully.");
                 return true;
             } else {
-                System.out.println("No outlet found with ID: " + outletId);
+                logger.info("No outlet found with ID: " + outletId);
                 return false;
             }
         } catch (SQLException e) {
-            System.err.println("Error updating outlet: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error updating outlet: " + e.getMessage(), e);
             return false;
         }
     }
@@ -66,7 +67,7 @@ public class OutletsDataBase {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
-            System.out.println("----- Existing Outlets -----");
+            logger.info("----- Existing Outlets -----");
             while (rs.next()) {
                 int id = rs.getInt("outlet_id");
                 String name = rs.getString("name");
@@ -78,7 +79,7 @@ public class OutletsDataBase {
                 outletsList.add(outlet);
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving outlets: " + e.getMessage());
+            logger.error("Error retrieving outlets: " + e.getMessage(), e);
         }
         return outletsList;
     }

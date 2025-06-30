@@ -2,8 +2,11 @@ package DataBase;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class InventoryDBSetup {
+    private static final Logger logger = LogManager.getLogger(InventoryDBSetup.class);
 
     // SQLite doesn't require DB creation separately
 
@@ -154,11 +157,29 @@ public class InventoryDBSetup {
                 ");"
             );
 
-            System.out.println("All tables created successfully (if not already present).");
+            logger.info("All tables created successfully (if not already present).");
 
         } catch (Exception e) {
-            System.err.println("Error creating tables: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error creating tables: " + e.getMessage(), e);
+        }
+    }
+
+    public static void resetAllDataExceptCore() throws Exception {
+        String[] tables = {"bill_items", "credit_payments", "outlet_credits", "bills", "purchases", "sales"};
+        try (java.sql.Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try (java.sql.Statement stmt = conn.createStatement()) {
+                stmt.execute("PRAGMA foreign_keys = OFF;");
+                for (String table : tables) {
+                    stmt.executeUpdate("DELETE FROM " + table + ";");
+                    stmt.executeUpdate("DELETE FROM sqlite_sequence WHERE name='" + table + "';");
+                }
+                stmt.execute("PRAGMA foreign_keys = ON;");
+                conn.commit();
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
         }
     }
 }

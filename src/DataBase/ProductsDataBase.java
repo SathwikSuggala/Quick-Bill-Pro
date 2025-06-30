@@ -3,10 +3,13 @@ package DataBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import models.Product;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 
 public class ProductsDataBase {
+    private static final Logger logger = LogManager.getLogger(ProductsDataBase.class);
 
     // 1. Get products by inlet name
     public ObservableList<Product> getProductsByInletName(String inletName) {
@@ -41,7 +44,7 @@ public class ProductsDataBase {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error fetching products: " + e.getMessage());
+            logger.error("Error fetching products: " + e.getMessage(), e);
         }
         return productsList;
     }
@@ -78,7 +81,7 @@ public class ProductsDataBase {
                 throw e;
             }
         } catch (SQLException e) {
-            System.err.println("Error adding product: " + e.getMessage());
+            logger.error("Error adding product: " + e.getMessage(), e);
         }
     }
 
@@ -104,7 +107,7 @@ public class ProductsDataBase {
                 throw e;
             }
         } catch (SQLException e) {
-            System.err.println("Error updating product: " + e.getMessage());
+            logger.error("Error updating product: " + e.getMessage(), e);
         }
     }
 
@@ -137,7 +140,7 @@ public class ProductsDataBase {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error fetching product stock: " + e.getMessage());
+            logger.error("Error fetching product stock: " + e.getMessage(), e);
         }
         return productsList;
     }
@@ -177,7 +180,7 @@ public class ProductsDataBase {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error searching products: " + e.getMessage());
+            logger.error("Error searching products: " + e.getMessage(), e);
         }
         return productsList;
     }
@@ -221,7 +224,7 @@ public class ProductsDataBase {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error adding purchase: " + e.getMessage());
+            logger.error("Error adding purchase: " + e.getMessage(), e);
             e.printStackTrace();
         }
     }

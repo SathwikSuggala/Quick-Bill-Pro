@@ -12,8 +12,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BillsDataBase {
+    private static final Logger logger = LogManager.getLogger(BillsDataBase.class);
     
     public static int createBill(int outletId, double totalCGST, double totalSGST, double totalAmount, 
                                 String paymentType, String remarks, Date billDate) throws SQLException {
@@ -185,7 +188,7 @@ public class BillsDataBase {
     }
     
     public static List<OutletCredit> getAllCredits() throws SQLException {
-        System.out.println("Executing getAllCredits query...");
+        logger.info("Executing getAllCredits query...");
         String query = "SELECT oc.*, o.name as outlet_name, " +
                       "COALESCE(SUM(cp.payment_amount), 0) as paid_amount, " +
                       "strftime('%Y-%m-%d', oc.credit_date) as formatted_credit_date, " +
@@ -202,7 +205,7 @@ public class BillsDataBase {
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             
-            System.out.println("Query executed successfully, processing results...");
+            logger.info("Query executed successfully, processing results...");
             while (rs.next()) {
                 try {
                     double paidAmount = rs.getDouble("paid_amount");
@@ -210,7 +213,7 @@ public class BillsDataBase {
                     String dueDateStr = rs.getString("formatted_due_date");
                     String creditDateStr = rs.getString("formatted_credit_date");
                     
-                    System.out.println("Processing credit - ID: " + rs.getInt("credit_id") + 
+                    logger.info("Processing credit - ID: " + rs.getInt("credit_id") + 
                                      ", Due Date: " + dueDateStr);
                     
                     java.sql.Date dueDate = dueDateStr != null ? java.sql.Date.valueOf(dueDateStr) : null;
@@ -231,17 +234,16 @@ public class BillsDataBase {
                     );
                     credits.add(credit);
                 } catch (Exception e) {
-                    System.err.println("Error processing credit row: " + e.getMessage());
-                    e.printStackTrace();
+                    logger.error("Error processing credit row: " + e.getMessage(), e);
                 }
             }
-            System.out.println("Total credits processed: " + credits.size());
+            logger.info("Total credits processed: " + credits.size());
         }
         return credits;
     }
     
     public static List<OutletCredit> getCreditsByOutlet(int outletId) throws SQLException {
-        System.out.println("Executing getCreditsByOutlet query for outlet ID: " + outletId);
+        logger.info("Executing getCreditsByOutlet query for outlet ID: " + outletId);
         String query = "SELECT oc.*, o.name as outlet_name, " +
                       "COALESCE(SUM(cp.payment_amount), 0) as paid_amount, " +
                       "strftime('%Y-%m-%d', oc.credit_date) as formatted_credit_date, " +
@@ -261,7 +263,7 @@ public class BillsDataBase {
             stmt.setInt(1, outletId);
             
             try (ResultSet rs = stmt.executeQuery()) {
-                System.out.println("Query executed successfully, processing results...");
+                logger.info("Query executed successfully, processing results...");
                 while (rs.next()) {
                     try {
                         double paidAmount = rs.getDouble("paid_amount");
@@ -269,7 +271,7 @@ public class BillsDataBase {
                         String dueDateStr = rs.getString("formatted_due_date");
                         String creditDateStr = rs.getString("formatted_credit_date");
                         
-                        System.out.println("Processing credit - ID: " + rs.getInt("credit_id") + 
+                        logger.info("Processing credit - ID: " + rs.getInt("credit_id") + 
                                          ", Due Date: " + dueDateStr);
                         
                         java.sql.Date dueDate = dueDateStr != null ? java.sql.Date.valueOf(dueDateStr) : null;
@@ -290,11 +292,10 @@ public class BillsDataBase {
                         );
                         credits.add(credit);
                     } catch (Exception e) {
-                        System.err.println("Error processing credit row: " + e.getMessage());
-                        e.printStackTrace();
+                        logger.error("Error processing credit row: " + e.getMessage(), e);
                     }
                 }
-                System.out.println("Total credits processed: " + credits.size());
+                logger.info("Total credits processed: " + credits.size());
             }
         }
         return credits;
@@ -422,7 +423,7 @@ public class BillsDataBase {
                 // If that fails, try parsing as a Unix timestamp (long string)
                 return new Date(Long.parseLong(dateString));
             } catch (NumberFormatException ex) {
-                System.err.println("Error parsing date string: " + dateString + ", Reason: " + ex.getMessage());
+                logger.error("Error parsing date string: " + dateString + ", Reason: " + ex.getMessage());
                 return null; // Or throw an exception, depending on desired error handling
             }
         }

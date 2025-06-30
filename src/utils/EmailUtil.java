@@ -52,6 +52,22 @@ public class EmailUtil {
 
         message.setContent(multipart);
 
-        Transport.send(message);
+        try {
+            Transport.send(message);
+        } catch (SendFailedException sfe) {
+            // Invalid address or similar
+            throw new MessagingException("Invalid recipient address. Please check the email address and try again.", sfe);
+        } catch (jakarta.mail.MessagingException me) {
+            Throwable cause = me.getCause();
+            if (cause != null && cause.getMessage() != null && cause.getMessage().toLowerCase().contains("unknownhostexception")) {
+                throw new MessagingException("No internet connection. Please check your network and try again.", me);
+            }
+            if (me.getMessage() != null && (me.getMessage().toLowerCase().contains("could not connect") || me.getMessage().toLowerCase().contains("unknownhostexception"))) {
+                throw new MessagingException("No internet connection. Please check your network and try again.", me);
+            }
+            throw new MessagingException("Failed to send email: " + me.getMessage(), me);
+        } catch (Exception e) {
+            throw new MessagingException("Unexpected error while sending email: " + e.getMessage(), e);
+        }
     }
 } 

@@ -1,7 +1,6 @@
 <component name="libraryTable">
   <library name="mailapi-2.0.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/mailapi-2.0.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/smtp-2.0.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jakarta.activation-2.0.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jakarta.mail-2.0.1.jar!/" />
